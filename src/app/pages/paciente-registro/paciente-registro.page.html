@@ -1,0 +1,99 @@
+<ion-header [translucent]="true" class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-title style="font-weight: 600; letter-spacing: 0.5px;">Mi Perfil Dental</ion-title>
+    
+    <!-- 🚪 Botón de salir directo en la barra superior -->
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrarSesion()" color="light">
+        <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" style="--background: #f8f9fa;">
+  <ion-grid fixed>
+    
+    <!-- Bienvenida -->
+    <ion-row class="ion-justify-content-center ion-margin-top">
+      <ion-col size="12" size-md="8" size-lg="6" class="ion-text-center">
+        <h2 style="font-weight: 700; color: #1a202c; margin-bottom: 8px;">¡Bienvenido a Dentismile!</h2>
+        <p style="color: #718096; margin-top: 0;">Completa tus datos para activar tus opciones de paciente.</p>
+      </ion-col>
+    </ion-row>
+
+    <!-- Formulario de Datos Personales -->
+    <ion-row class="ion-justify-content-center">
+      <ion-col size="12" size-md="8" size-lg="6">
+        <ion-card style="border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); background: #ffffff;">
+          <ion-card-content class="ion-padding">
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+              <ion-item fill="outline" mode="md" style="--border-radius: 10px;">
+                <ion-label position="floating">Nombre(s)</ion-label>
+                <ion-input type="text" [(ngModel)]="pacienteData.nombre"></ion-input>
+              </ion-item>
+
+              <ion-item fill="outline" mode="md" style="--border-radius: 10px;">
+                <ion-label position="floating">Apellido(s)</ion-label>
+                <ion-input type="text" [(ngModel)]="pacienteData.apellido"></ion-input>
+              </ion-item>
+
+              <ion-item fill="outline" mode="md" style="--border-radius: 10px;">
+                <ion-label position="floating">Fecha de Nacimiento</ion-label>
+                <ion-input type="date" [(ngModel)]="pacienteData.fechaNacimiento"></ion-input>
+              </ion-item>
+
+              <ion-item fill="outline" mode="md" style="--border-radius: 10px;">
+                <ion-label position="floating">Número de Teléfono</ion-label>
+                <ion-input type="tel" [(ngModel)]="pacienteData.telefono"></ion-input>
+              </ion-item>
+            </div>
+
+            <div style="margin-top: 24px;">
+              <ion-button color="primary" expand="block" mode="ios" style="font-weight: 600; --border-radius: 12px; height: 46px;" (click)="guardarDatosPaciente()">
+                <ion-icon slot="start" name="save-outline"></ion-icon>
+                Guardar y Crear Perfil
+              </ion-button>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <!-- 🌟 Menú de opciones interactivo del paciente -->
+    <ion-row class="ion-justify-content-center ion-margin-top" *ngIf="isPerfilGuardado">
+      <ion-col size="12" size-md="8" size-lg="6">
+        <h3 style="font-weight: 700; color: #2d3748; margin-left: 8px; margin-bottom: 16px;">Mis Opciones</h3>
+        
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          
+          <ion-item button detail="true" (click)="irAAgendarCita()" style="--background: #ffffff; --border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); margin-bottom: 4px;">
+            <ion-icon name="calendar-outline" slot="start" color="success"></ion-icon>
+            <ion-label>
+              <h2 style="font-weight: 600;">Agendar Mi Cita</h2>
+              <p>Solicita un horario en la agenda médica</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item button detail="true" (click)="verTratamientos()" style="--background: #ffffff; --border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); margin-bottom: 4px;">
+            <ion-icon name="medical-outline" slot="start" color="primary"></ion-icon>
+            <ion-label>
+              <h2 style="font-weight: 600;">Tratamientos Disponibles</h2>
+              <p>Consulta nuestro catálogo de procedimientos y costos</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item button detail="true" (click)="verHistorialClinico()" style="--background: #ffffff; --border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); margin-bottom: 4px;">
+            <ion-icon name="document-text-outline" slot="start" color="warning"></ion-icon>
+            <ion-label>
+              <h2 style="font-weight: 600;">Mi Historial Clínico</h2>
+              <p>Revisa tus diagnósticos y evolución médica</p>
+            </ion-label>
+          </ion-item>
+
+        </div>
+      </ion-col>
+    </ion-row>
+
+  </ion-grid>
+</ion-content>

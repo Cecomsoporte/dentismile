@@ -1,0 +1,281 @@
+/* ==========================
+   FONDO GENERAL
+========================== */
+
+.login-content {
+
+  --background: radial-gradient(
+    circle at center,
+    #1e81ce 0%,
+    #124b80 35%,
+    #0a2744 70%,
+    #03152a 100%
+  );
+
+}
+
+/* ==========================
+   CONTENEDOR PRINCIPAL
+========================== */
+
+.login-container {
+
+  width: 90%;
+  max-width: 400px;
+
+  margin: auto;
+  margin-top: 50px;
+
+  padding: 35px;
+
+  text-align: center;
+
+  position: relative;
+
+  background: rgba(40, 120, 180, 0.15);
+
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
+  border: 2px solid rgba(90, 220, 255, 0.40);
+
+  border-radius: 35px;
+
+  box-shadow:
+    0 0 15px rgba(0,180,255,.30),
+    0 0 40px rgba(0,180,255,.15),
+    inset 0 0 20px rgba(255,255,255,.05);
+
+  color: white;
+
+  overflow: hidden;
+}
+
+/* ==========================
+   EFECTOS LATERALES NEÓN
+========================== */
+
+.login-container::before {
+
+  content: '';
+
+  position: absolute;
+
+  left: -3px;
+  top: 35%;
+
+  width: 4px;
+  height: 100px;
+
+  border-radius: 10px;
+
+  background: #38bdf8;
+
+  box-shadow:
+    0 0 10px #38bdf8,
+    0 0 20px #38bdf8,
+    0 0 40px #38bdf8;
+}
+
+.login-container::after {
+
+  content: '';
+
+  position: absolute;
+
+  right: -3px;
+  top: 35%;
+
+  width: 4px;
+  height: 100px;
+
+  border-radius: 10px;
+
+  background: #67e8f9;
+
+  box-shadow:
+    0 0 10px #67e8f9,
+    0 0 20px #67e8f9,
+    0 0 40px #67e8f9;
+}
+
+/* ==========================
+   LOGO
+========================== */
+
+.logo {
+
+  width: 110px;
+  height: 110px;
+
+  object-fit: cover;
+
+  border-radius: 50%;
+
+  margin-bottom: 15px;
+
+  border: 3px solid #38bdf8;
+
+  padding: 5px;
+
+  box-shadow:
+    0 0 15px rgba(56,189,248,.6),
+    0 0 30px rgba(56,189,248,.4);
+}
+
+/* ==========================
+   TITULOS
+========================== */
+
+h1 {
+
+  color: #7dd3fc;
+
+  font-size: 30px;
+
+  font-weight: bold;
+
+  letter-spacing: 3px;
+
+  margin-bottom: 5px;
+
+  text-shadow:
+    0 0 10px rgba(125,211,252,.5);
+}
+
+.subtitulo {
+
+  color: rgba(255,255,255,.75);
+
+  margin-bottom: 25px;
+
+  font-size: 14px;
+}
+
+/* ==========================
+   INPUTS
+========================== */
+
+ion-item {
+
+  --background: rgba(0, 45, 90, 0.65);
+
+  --color: white;
+
+  border-radius: 12px;
+
+  margin-bottom: 15px;
+
+  border: 1px solid rgba(56,189,248,.25);
+
+  box-shadow:
+    inset 0 0 10px rgba(255,255,255,.05);
+}
+
+ion-input {
+
+  color: white;
+}
+
+/* ==========================
+   BOTÓN LOGIN
+========================== */
+
+.login-btn {
+
+  --background: linear-gradient(
+    90deg,
+    #003b8f,
+    #0284c7
+  );
+
+  --border-radius: 12px;
+
+  height: 50px;
+
+  font-weight: bold;
+
+  letter-spacing: 2px;
+
+  margin-top: 15px;
+
+  box-shadow:
+    0 0 15px rgba(0,180,255,.35);
+}
+
+/* ==========================
+   BOTONES SECUNDARIOS
+========================== */
+
+.acciones {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-top: 10px;
+
+  margin-bottom: 10px;
+}
+
+.acciones ion-button {
+
+  --color: #7dd3fc;
+
+  font-size: 12px;
+}
+
+/* ==========================
+   RESULTADO
+========================== */
+
+.resultado {
+
+  margin-top: 15px;
+
+  color: white;
+
+  font-weight: bold;
+
+  min-height: 40px;
+}
+
+/* ==========================
+   FOOTER
+========================== */
+
+.footer {
+
+  margin-top: 25px;
+
+  color: rgba(255,255,255,.6);
+
+  font-size: 12px;
+}
+
+/* ==========================
+   ANIMACIÓN SUAVE
+========================== */
+
+.login-container {
+
+  animation: flotar 4s ease-in-out infinite;
+}
+
+@keyframes flotar {
+
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+
+}

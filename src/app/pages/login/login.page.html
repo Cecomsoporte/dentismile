@@ -1,0 +1,82 @@
+<ion-content class="login-content" [fullscreen]="true">
+
+  <div class="login-container">
+
+    <img src="assets/icon/dental.jpg" alt="Dentismile" class="logo">
+
+    <h1>Dentismile</h1>
+    <p class="subtitulo">Sistema de Gestión Dental</p>
+
+    <ion-item lines="none" class="login-item">
+      <ion-input
+        type="email"
+        [(ngModel)]="usuario"
+        placeholder="Usuario o Correo Electrónico">
+      </ion-input>
+    </ion-item>
+
+    <ion-item lines="none" class="login-item">
+      <ion-input
+        type="password"
+        [(ngModel)]="password"
+        placeholder="Contraseña"
+        [disabled]="bloqueado"
+        (ionInput)="validarPassword()">
+      </ion-input>
+    </ion-item>
+
+    <ion-button
+      expand="block"
+      class="login-btn"
+      [disabled]="bloqueado"
+      (click)="iniciarSesion()">
+      Iniciar Sesión
+    </ion-button>
+
+    <div class="acciones">
+      <ion-button
+        fill="clear"
+        size="small"
+        class="accion-btn"
+        (click)="crearCuenta()">
+        Crear Cuenta
+      </ion-button>
+
+      <ion-button
+        fill="clear"
+        size="small"
+        class="accion-btn"
+        (click)="recuperarPassword()">
+        ¿Olvidaste tu contraseña?
+      </ion-button>
+    </div>
+
+    <div class="resultado" *ngIf="resultado">
+      <p [innerHTML]="resultado"></p>
+    </div>
+
+    <ion-button
+      expand="block"
+      fill="outline"
+      class="generar-btn"
+      (click)="generarPassword()">
+      Generar Contraseña Segura
+    </ion-button>
+
+    <ion-item lines="none" class="login-item">
+      <ion-input
+        [(ngModel)]="generada"
+        readonly
+        placeholder="Contraseña Generada">
+      </ion-input>
+    </ion-item>
+
+    <div class="footer">
+      © 2026 Dentismile
+      <br>
+      Consultorio Dental
+    </div>
+
+  </div>
+
+</ion-content>

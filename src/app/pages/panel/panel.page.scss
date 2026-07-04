@@ -1,0 +1,143 @@
+/* ==========================
+   FONDO GENERAL DEL PANEL
+========================== */
+.panel-content {
+  --background: radial-gradient(
+    circle at center,
+    #1e81ce 0%,
+    #124b80 35%,
+    #0a2744 70%,
+    #03152a 100%
+  );
+}
+
+/* ==========================
+   BARRA SUPERIOR (TOOLBAR)
+========================== */
+ion-toolbar {
+  --background: rgba(18, 75, 128, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(90, 220, 255, 0.3);
+  --color: #7dd3fc;
+  
+  ion-title {
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-shadow: 0 0 8px rgba(125, 211, 252, 0.4);
+  }
+
+  ion-button {
+    --color: #7dd3fc;
+  }
+}
+
+/* ==========================
+   TEXTO DE BIENVENIDA
+========================== */
+.bienvenida {
+  text-align: center;
+  margin: 30px 0 15px 0;
+
+  h2 {
+    color: #7dd3fc;
+    font-size: 26px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-shadow: 0 0 10px rgba(125, 211, 252, 0.5);
+    margin-bottom: 5px;
+  }
+
+  p {
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 14px;
+  }
+}
+
+/* ==========================
+   TARJETAS DEL MENÚ (GLASSMORPHISM)
+========================== */
+.menu-card {
+  background: rgba(40, 120, 180, 0.15) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  
+  border: 2px solid rgba(90, 220, 255, 0.35);
+  border-radius: 22px;
+  
+  box-shadow:
+    0 0 12px rgba(0, 180, 255, 0.20),
+    inset 0 0 15px rgba(255, 255, 255, 0.03);
+    
+  margin: 10px;
+  transition: all 0.3s ease-in-out;
+
+  /* Efecto al pasar el cursor o presionar la opción */
+  &:hover, &:active {
+    transform: translateY(-5px);
+    border-color: #38bdf8;
+    box-shadow: 
+      0 0 20px rgba(56, 189, 248, 0.4),
+      inset 0 0 15px rgba(255, 255, 255, 0.05);
+  }
+
+  ion-card-title {
+    color: #7dd3fc !important;
+    font-size: 1.2rem;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+  }
+
+  ion-card-content {
+    color: rgba(255, 255, 255, 0.7) !important;
+    font-size: 0.9rem;
+    padding-top: 5px;
+  }
+}
+
+/* ==========================
+   CONTENEDOR DE EMOJIS / ICONOS
+========================== */
+.icon-container {
+  background: rgba(0, 45, 90, 0.65);
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+
+  .emoji-icon {
+    font-size: 1.6rem;
+    /* Un ligero filtro de brillo para que resalten en el fondo oscuro */
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.2));
+  }
+}
+
+/* ==========================
+   FOOTER DEL PANEL
+========================== */
+.footer {
+  text-align: center;
+  margin-top: 40px;
+  margin-bottom: 20px;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 12px;
+}
+
+
+/* ==========================
+   BOTÓN DE CERRAR SESIÓN
+========================== */
+.logout-btn {
+  --color: #ff6b6b; /* Color rojizo sutil para indicar salida */
+  transition: all 0.3s ease;
+
+  &:hover, &:active {
+    --color: #ff4757;
+    filter: drop-shadow(0 0 8px rgba(255, 71, 87, 0.6));
+    transform: scale(1.1);
+  }
+}

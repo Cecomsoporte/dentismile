@@ -1,0 +1,76 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/panel"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Control de Pacientes</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" [fullscreen]="true">
+  
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+    <h2 style="margin: 0; font-weight: bold; color: var(--ion-color-dark);">Expedientes de Dentismile</h2>
+    <ion-button color="success" (click)="abrirFormularioAgregar()" style="font-weight: 600;">
+      <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+      Nuevo Paciente
+    </ion-button>
+  </div>
+
+  <ion-searchbar 
+    placeholder="Buscar paciente por nombre o teléfono..." 
+    animated="true" 
+    debounce="300"
+    (ionInput)="buscarPaciente($event)">
+  </ion-searchbar>
+
+  <ion-card *ngIf="listaPacientes.length === 0" style="text-align: center; padding: 20px; margin-top: 20px;">
+    <ion-card-content>
+      <ion-icon name="people-outline" style="font-size: 56px; color: #ccc; margin-bottom: 10px;"></ion-icon>
+      <p style="font-size: 16px; color: #777;">No hay pacientes registrados en este momento o no coinciden con la búsqueda.</p>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-list *ngIf="listaPacientes.length > 0" lines="max">
+    <ion-item *ngFor="let paciente of listaPacientes">
+      
+      <ion-avatar slot="start" style="background: #eef4ff; display: flex; align-items: center; justify-content: center; border: 1px solid #1e62ff;">
+        <span style="font-weight: bold; color: var(--ion-color-primary); font-size: 14px;">
+          {{ paciente.nombre?.charAt(0) }}{{ paciente.apellido?.charAt(0) }}
+        </span>
+      </ion-avatar>
+
+      <ion-label class="ion-text-wrap">
+        <h3 style="font-weight: bold; font-size: 16px; margin-bottom: 4px;">{{ paciente.nombre }} {{ paciente.apellido }}</h3>
+        <p style="display: flex; align-items: center; gap: 5px; margin: 2px 0;">
+          <ion-icon name="call-outline" color="primary"></ion-icon> Tel: {{ paciente.telefono || 'No registrado' }}
+        </p>
+        <p style="display: flex; align-items: center; gap: 5px; margin: 2px 0;">
+          <ion-icon name="mail-outline" color="medium"></ion-icon> {{ paciente.correo || 'Sin correo' }}
+        </p>
+      </ion-label>
+      
+      <ion-buttons slot="end" style="display: flex; flex-direction: row; gap: 6px; margin-left: 10px;">
+        
+        <ion-button color="tertiary" [routerLink]="['/historial', paciente.id]" style="--padding-start: 4px; --padding-end: 4px;">
+          <ion-icon slot="icon-only" name="medical-outline"></ion-icon>
+        </ion-button>
+
+        <ion-button color="secondary" (click)="verDetallesPaciente(paciente)" style="--padding-start: 4px; --padding-end: 4px;">
+          <ion-icon slot="icon-only" name="eye-outline"></ion-icon>
+        </ion-button>
+        
+        <ion-button color="warning" (click)="abrirFormularioEditar(paciente)" style="--padding-start: 4px; --padding-end: 4px;">
+          <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+        </ion-button>
+        
+        <ion-button color="danger" (click)="clickEliminar(paciente.id!)" style="--padding-start: 4px; --padding-end: 4px;">
+          <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+        </ion-button>
+
+      </ion-buttons>
+
+    </ion-item>
+  </ion-list>
+
+</ion-content>

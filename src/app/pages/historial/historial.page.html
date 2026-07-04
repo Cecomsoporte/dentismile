@@ -1,0 +1,64 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/panel"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Historial Clínico</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <h2 style="margin-left: 10px;">Paciente: {{ historial.nombrePaciente }}</h2>
+
+  <div *ngIf="resultado" class="ion-padding" style="font-weight: bold; font-size: 1.1em;">
+    <span [innerHTML]="resultado"></span>
+  </div>
+
+  <ion-card>
+    <ion-card-header color="light">
+      <ion-card-title>🩺 Antecedentes Médicos</ion-card-title>
+    </ion-card-header>
+    
+    <ion-card-content class="ion-no-padding">
+      <ion-item lines="full">
+        <ion-input label="Alergias registradas:" labelPlacement="stacked" 
+                   [(ngModel)]="historial.alergias" [disabled]="!esEditable"></ion-input>
+      </ion-item>
+
+      <ion-item lines="full">
+        <ion-input label="Enfermedades crónicas:" labelPlacement="stacked" 
+                   [(ngModel)]="historial.enfermedadesCronicas" [disabled]="!esEditable"></ion-input>
+      </ion-item>
+
+      <ion-item lines="full">
+        <ion-input label="Medicamentos actuales:" labelPlacement="stacked" 
+                   [(ngModel)]="historial.medicamentosActuales" [disabled]="!esEditable"></ion-input>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header color="light">
+      <ion-card-title>🦷 Evaluación Odontológica</ion-card-title>
+    </ion-card-header>
+    
+    <ion-card-content class="ion-no-padding">
+      <ion-item lines="full">
+        <ion-input label="Motivo de consulta principal:" labelPlacement="stacked" 
+                   [(ngModel)]="historial.motivoPrincipal" [disabled]="!esEditable"></ion-input>
+      </ion-item>
+
+      <ion-item lines="none">
+        <ion-textarea label="Observaciones clínicas y tratamiento:" labelPlacement="stacked" [rows]="4"
+                      [(ngModel)]="historial.observacionesGenerales" [disabled]="!esEditable"></ion-textarea>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+
+  <div class="ion-padding" *ngIf="esEditable">
+    <ion-button expand="block" color="success" (click)="guardarExpediente()">
+      <ion-icon slot="start" name="save-outline"></ion-icon>
+      Guardar Historial Clínico
+    </ion-button>
+  </div>
+</ion-content>
