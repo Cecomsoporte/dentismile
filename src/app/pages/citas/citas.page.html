@@ -1,93 +1,341 @@
-<ion-header [translucent]="true">
+<ion-header class="ion-no-border">
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/panel"></ion-back-button>
     </ion-buttons>
-    <ion-title>Agenda de Citas</ion-title>
+    <ion-title>Gestión de Citas</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="verDetalleTratamientos()">
+        <ion-icon name="medkit-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding" [fullscreen]="true">
+<ion-content class="ion-padding" style="--background: #f8fafc;">
 
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-    <h2 style="margin: 0; font-weight: bold; color: var(--ion-color-dark);">Control de Agenda</h2>
-    <ion-button color="success" (click)="abrirFormularioCita()" style="font-weight: 600;">
-      <ion-icon slot="start" name="add-circle-outline"></ion-icon>
-      Agendar Cita
-    </ion-button>
-  </div>
-
-  <ion-card *ngIf="listaCitas.length === 0" style="text-align: center; padding: 25px;">
+  <!-- 🗓️ FILTRO DE FECHAS / CALENDARIO -->
+  <ion-card style="border-radius: 16px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+    <ion-card-header>
+      <ion-card-title style="font-size: 16px; font-weight: 700;">Filtrar Citas por Día</ion-card-title>
+    </ion-card-header>
     <ion-card-content>
-      <ion-icon name="calendar-outline" style="font-size: 64px; color: #ccc; margin-bottom: 10px;"></ion-icon>
-      <p style="font-size: 16px; color: #666;">No hay citas agendadas en este momento.</p>
+      <ion-datetime
+        presentation="date"
+        [highlightedDates]="fechasDestacadas"
+        (ionChange)="diaSeleccionado($event)">
+      </ion-datetime>
+
+      <div *ngIf="fechaFiltroActual" style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+        <ion-badge color="primary">Filtro: {{ fechaFiltroActual }}</ion-badge>
+        <ion-button fill="clear" color="medium" size="small" (click)="limpiarFiltro()">
+          Mostrar todas
+        </ion-button>
+      </div>
     </ion-card-content>
   </ion-card>
 
-  <div *ngIf="listaCitas.length > 0">
-    <ion-card *ngFor="let cita of listaCitas" style="margin-bottom: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
-      
-      <ion-item lines="none" style="--background: transparent;">
-        <ion-avatar slot="start" style="background: #1e62ff; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold;">
-          {{ cita.nombrePaciente.charAt(0) }}
-        </ion-avatar>
+  <!-- ➕ BOTÓN PARA AGENDAR -->
+  <ion-button expand="block" mode="ios" color="primary" style="margin-bottom: 20px; font-weight: 700;" (click)="abrirFormularioCita()">
+    <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+    Agendar Nueva Cita
+  </ion-button>
 
-        <ion-label>
-          <h2 style="font-weight: bold; font-size: 18px; color: #111;">{{ cita.nombrePaciente }}</h2>
-          <p style="color: var(--ion-color-medium); font-size: 14px; margin-top: 2px;">🧑‍⚕️ {{ cita.nombreDoctor }}</p>
-        </ion-label>
-
-        <ion-badge slot="end" [color]="cita.estado === 'Confirmada' ? 'success' : (cita.estado === 'Pendiente' ? 'warning' : (cita.estado === 'Completada' ? 'secondary' : 'medium'))" style="padding: 6px 10px; font-size: 12px; border-radius: 8px;">
-          {{ cita.estado }}
-        </ion-badge>
-      </ion-item>
-
-      <ion-card-content style="padding-top: 0;">
-        <hr style="border: 0; border-top: 1px solid #f0f0f0; margin-bottom: 12px;">
-        
-        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 15px; color: #444;">
-          <span style="display: flex; align-items: center; gap: 8px;">
-            <ion-icon name="calendar-outline" color="primary"></ion-icon>
-            <strong>Fecha:</strong> {{ cita.fecha | date:'dd/MM/yyyy' }}
-          </span>
-          <span style="display: flex; align-items: center; gap: 8px;">
-            <ion-icon name="time-outline" color="primary"></ion-icon>
-            <strong>Horario:</strong> {{ cita.horaInicio }} hrs. - {{ cita.horaFin }} hrs.
-          </span>
-          <span style="display: flex; align-items: center; gap: 8px;">
-            <ion-icon name="alert-circle-outline" color="secondary"></ion-icon>
-            <strong>Motivo:</strong> {{ cita.motivoConsulta }}
-          </span>
-        </div>
-
-        <div *ngIf="cita.estado === 'Pendiente' && rolUsuario !== 'Paciente'" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px; border-top: 1px solid #f0f0f0; padding-top: 12px;">
-          <ion-button color="danger" fill="clear" size="small" (click)="cancelarCita(cita.id!)" style="font-weight: bold;">
-            <ion-icon slot="start" name="close-circle-outline"></ion-icon>
-            Rechazar
-          </ion-button>
-
-          <ion-button color="success" size="small" (click)="validarCita(cita)" style="font-weight: bold;">
-            <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>
-            Validar Horario
-          </ion-button>
-        </div>
-
-        <div *ngIf="cita.estado === 'Confirmada' && rolUsuario !== 'Paciente'" style="display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 15px; border-top: 1px solid #f0f0f0; padding-top: 12px;">
-          
-          <ion-button color="danger" fill="outline" size="small" (click)="cancelarCita(cita.id!)" style="font-weight: bold;">
-            <ion-icon slot="start" name="close-circle-outline"></ion-icon>
-            Cancelar Cita
-          </ion-button>
-
-          <ion-button *ngIf="rolUsuario === 'Doctor' || rolUsuario === 'Administrador'" color="success" size="small" (click)="completarConsulta(cita)" style="font-weight: bold;">
-            <ion-icon slot="start" name="checkmark-done-outline"></ion-icon>
-            Terminar Consulta
-          </ion-button>
-          
-        </div>
-
-      </ion-card-content>
-    </ion-card>
+  <!-- 📋 LISTADO DE CITAS -->
+  <div *ngIf="listaCitasFiltradas.length === 0" style="text-align: center; padding: 30px 10px; color: #64748b;">
+    <ion-icon name="calendar-outline" style="font-size: 48px; color: #cbd5e1;"></ion-icon>
+    <p style="margin-top: 10px; font-weight: 600;">No hay citas registradas para el criterio seleccionado.</p>
   </div>
+
+  <ion-grid class="ion-no-padding">
+    <ion-row>
+      <ion-col size="12" size-md="6" *ngFor="let cita of listaCitasFiltradas">
+        <ion-card style="border-radius: 16px; margin-bottom: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); border: 1px solid #e2e8f0;">
+          <ion-card-header>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <ion-card-title style="font-size: 16px; font-weight: 700; color: #0f172a;">
+                {{ cita.nombrePaciente }}
+              </ion-card-title>
+              
+              <!-- Badges de Estado -->
+              <ion-badge [color]="cita.estado === 'Confirmada' ? 'success' : (cita.estado === 'Pendiente' ? 'warning' : (cita.estado === 'Completada' ? 'tertiary' : 'danger'))">
+                {{ cita.estado }}
+              </ion-badge>
+            </div>
+            <ion-card-subtitle style="color: #64748b;">Motivo: {{ cita.motivoConsulta }}</ion-card-subtitle>
+          </ion-card-header>
+
+          <ion-card-content>
+            <div style="display: flex; gap: 15px; margin-bottom: 12px; font-size: 13px; color: #334155;">
+              <span style="display: flex; align-items: center; gap: 4px;">
+                <ion-icon name="calendar-outline" color="primary"></ion-icon>
+                {{ cita.fecha }}
+              </span>
+              <span style="display: flex; align-items: center; gap: 4px;">
+                <ion-icon name="time-outline" color="primary"></ion-icon>
+                {{ cita.horaInicio }} - {{ cita.horaFin }}
+              </span>
+            </div>
+
+            <!-- Datos Clínicos si la Cita está Completada -->
+            <div *ngIf="cita.estado === 'Completada'" style="background: #f1f5f9; padding: 10px; border-radius: 8px; margin-bottom: 12px; font-size: 12px;">
+              <p style="margin: 0 0 4px 0;"><strong>Diagnóstico:</strong> {{ cita.diagnostico }}</p>
+              <p style="margin: 0 0 4px 0;"><strong>Tratamiento:</strong> {{ cita.tratamiento }}</p>
+              <p style="margin: 0;" *ngIf="cita.receta"><strong>Receta:</strong> {{ cita.receta }}</p>
+            </div>
+
+            <!-- Botones de Acción según el Rol y Estado -->
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;">
+              
+              <!-- Validar Cita (Solo Doctor/Pendiente) -->
+              <ion-button *ngIf="rolUsuario === 'Doctor' && cita.estado === 'Pendiente'" size="small" color="success" (click)="validarCita(cita)">
+                <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+                Validar
+              </ion-button>
+
+              <!-- Finalizar Consulta (Solo Doctor/Confirmada) -->
+              <ion-button *ngIf="rolUsuario === 'Doctor' && cita.estado === 'Confirmada'" size="small" color="tertiary" (click)="abrirModalFinalizar(cita)">
+                <ion-icon name="checkmark-done-outline" slot="start"></ion-icon>
+                Atender Cita
+              </ion-button>
+
+              <!-- Cancelar Cita -->
+              <ion-button *ngIf="cita.estado !== 'Cancelada' && cita.estado !== 'Completada'" size="small" color="danger" fill="light" (click)="cancelarCita(cita.id!)">
+                <ion-icon name="close-circle-outline" slot="start"></ion-icon>
+                Cancelar
+              </ion-button>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <!-- 📅 NUEVO MODAL: FORMULARIO PARA AGENDAR CITA CON BÚSQUEDA INTELIGENTE -->
+  <ion-modal [isOpen]="isAgendarModalOpen" (didDismiss)="cerrarFormularioCita()">
+    <ng-template>
+      <ion-header class="ion-no-border">
+        <ion-toolbar color="primary">
+          <ion-title>Agendar Cita</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="cerrarFormularioCita()">Cancelar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="ion-padding">
+        <div style="margin-bottom: 15px;">
+          <h3 style="margin: 0; font-weight: 700; color: #0f172a;">Ingresa los datos de la cita</h3>
+        </div>
+
+        <ion-list lines="full" style="position: relative;">
+          
+          <!-- 🔍 CAMPO DE BÚSQUEDA INTELIGENTE DE PACIENTES -->
+          <ion-item lines="full">
+            <ion-label position="stacked">Nombre del Paciente *</ion-label>
+            <ion-input 
+              [(ngModel)]="busquedaPaciente" 
+              (ionInput)="filtrarPacientes($event)"
+              placeholder="Escribe para buscar paciente...">
+            </ion-input>
+          </ion-item>
+
+          <!-- 💡 LISTA DESPLEGABLE DE SUGERENCIAS DE PACIENTES -->
+          <ion-list 
+            *ngIf="pacientesFiltrados.length > 0" 
+            class="ion-no-padding" 
+            style="border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 4px; max-height: 180px; overflow-y: auto; background: #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: relative; z-index: 100;">
+            <ion-item 
+              button 
+              *ngFor="let p of pacientesFiltrados" 
+              (click)="seleccionarPaciente(p)"
+              lines="full">
+              <ion-icon name="person-circle-outline" slot="start" color="primary"></ion-icon>
+              <ion-label>
+                <h3 style="font-weight: 600; margin: 0; font-size: 14px;">{{ p.nombre }} {{ p.apellido }}</h3>
+                <p style="font-size: 12px; color: #64748b; margin: 0;" *ngIf="p.telefono">Tel: {{ p.telefono }}</p>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+
+          <!-- Fecha -->
+          <ion-item style="margin-top: 8px;">
+            <ion-label position="stacked">Fecha de Cita *</ion-label>
+            <ion-input type="date" [(ngModel)]="nuevaCita.fecha"></ion-input>
+          </ion-item>
+
+          <!-- Hora -->
+          <ion-item>
+            <ion-label position="stacked">Hora de Inicio *</ion-label>
+            <ion-input type="time" [(ngModel)]="nuevaCita.horaInicio"></ion-input>
+          </ion-item>
+
+          <!-- ⏱️ SELECCIÓN DE DURACIÓN -->
+          <ion-item>
+            <ion-label position="stacked">Duración Estimada *</ion-label>
+            <ion-select [(ngModel)]="nuevaCita.duracion" placeholder="Seleccionar tiempo">
+              <ion-select-option value="30 min">30 minutos</ion-select-option>
+              <ion-select-option value="45 min">45 minutos</ion-select-option>
+              <ion-select-option value="1 hora">1 hora</ion-select-option>
+              <ion-select-option value="1.5 horas">1 hora y media</ion-select-option>
+            </ion-select>
+          </ion-item>
+
+          <!-- Motivo -->
+          <ion-item>
+            <ion-label position="stacked">Motivo de Consulta / Tratamiento *</ion-label>
+            <ion-input [(ngModel)]="nuevaCita.motivoConsulta" placeholder="Ej. Limpieza dental"></ion-input>
+          </ion-item>
+        </ion-list>
+
+        <ion-button 
+          expand="block" 
+          color="primary" 
+          mode="ios" 
+          style="margin-top: 25px; font-weight: 700;" 
+          (click)="guardarNuevaCita()">
+          <ion-icon name="calendar-outline" slot="start"></ion-icon>
+          Confirmar y Agendar
+        </ion-button>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <!-- 🎨 MODAL VISUAL: CATÁLOGO DE SERVICIOS -->
+  <ion-modal [isOpen]="isCatalogoModalOpen" (didDismiss)="cerrarModalCatalogo()">
+    <ng-template>
+      <ion-header class="ion-no-border">
+        <ion-toolbar color="primary">
+          <ion-title>Catálogo de Servicios</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="cerrarModalCatalogo()">Cerrar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="ion-padding" style="--background: #f8fafc;">
+        
+        <div style="text-align: center; margin-bottom: 24px; padding: 0 10px;">
+          <h2 style="font-weight: 800; font-size: 24px; color: #1e293b; margin: 0 0 6px 0;">Catálogo de Servicios</h2>
+          <p style="color: #64748b; font-size: 14px; margin: 0;">Conoce nuestros procedimientos disponibles y selecciona el adecuado.</p>
+        </div>
+
+        <ion-grid class="ion-no-padding">
+          <ion-row>
+            <ion-col size="12" size-md="6" *ngFor="let servicio of catalogoTratamientos" style="padding: 8px;">
+              <ion-card style="margin: 0; border-radius: 18px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); background: #ffffff; border: 1px solid #f1f5f9;">
+                <ion-card-content style="padding: 20px;">
+                  
+                  <div style="display: flex; justify-content: flex-end; margin-bottom: 12px;">
+                    <span style="background: #6366f1; color: #ffffff; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px;">
+                      {{ servicio.categoria }}
+                    </span>
+                  </div>
+
+                  <div style="display: flex; align-items: flex-start; gap: 8px; margin-bottom: 10px;">
+                    <ion-icon name="medkit-outline" color="primary" style="font-size: 22px; flex-shrink: 0; margin-top: 2px;"></ion-icon>
+                    <h3 style="margin: 0; font-size: 17px; font-weight: 700; color: #0f172a; line-height: 1.3;">{{ servicio.nombre }}</h3>
+                  </div>
+
+                  <p style="color: #64748b; font-size: 13px; line-height: 1.5; margin: 0 0 16px 0; min-height: 38px;">
+                    {{ servicio.descripcion }}
+                  </p>
+
+                  <div style="background: #f8fafc; border-radius: 10px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; font-size: 13px; font-weight: 600; color: #334155;">
+                    <span style="display: flex; align-items: center; gap: 6px;">
+                      <ion-icon name="time-outline" style="font-size: 16px; color: #64748b;"></ion-icon>
+                      {{ servicio.duracion }}
+                    </span>
+                    <span style="display: flex; align-items: center; gap: 6px; color: #059669; font-weight: 700;">
+                      <ion-icon name="cash-outline" style="font-size: 16px;"></ion-icon>
+                      ${{ servicio.precio }} MXN
+                    </span>
+                  </div>
+
+                  <ion-button 
+                    expand="block" 
+                    mode="ios" 
+                    color="primary" 
+                    style="font-weight: 700; --border-radius: 10px; height: 42px; font-size: 13px;"
+                    (click)="seleccionarTratamientoDesdeCatalogo(servicio.nombre)">
+                    <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+                    SELECCIONAR ESTE TRATAMIENTO
+                  </ion-button>
+
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <!-- 🩺 MODAL: FINALIZAR CONSULTA Y EXPEDIENTE CLÍNICO -->
+  <ion-modal [isOpen]="isFinalizarModalOpen" (didDismiss)="cerrarModalFinalizar()">
+    <ng-template>
+      <ion-header class="ion-no-border">
+        <ion-toolbar color="primary">
+          <ion-title>Registro Clínico de Consulta</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="cerrarModalFinalizar()">Cancelar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="ion-padding">
+        <div *ngIf="citaSeleccionada">
+          <h3 style="margin-top: 0; font-weight: 700; color: #0f172a;">Paciente: {{ citaSeleccionada.nombrePaciente }}</h3>
+          <p style="color: #64748b; font-size: 14px; margin-bottom: 20px;">Motivo inicial: {{ citaSeleccionada.motivoConsulta }}</p>
+
+          <ion-list lines="full">
+            <ion-item>
+              <ion-label position="stacked">Diagnóstico *</ion-label>
+              <ion-textarea 
+                [(ngModel)]="registroConsulta.diagnostico" 
+                placeholder="Ej. Caries de segundo grado en molar inferior derecho" 
+                rows="3">
+              </ion-textarea>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Tratamiento Realizado *</ion-label>
+              <ion-select [(ngModel)]="registroConsulta.tratamientoRealizado" placeholder="Seleccionar opción">
+                <ion-select-option *ngFor="let item of catalogoTratamientos" [value]="item.nombre">
+                  {{ item.nombre }}
+                </ion-select-option>
+                <ion-select-option value="Otro">Otro tratamiento...</ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            <ion-item *ngIf="registroConsulta.tratamientoRealizado === 'Otro'">
+              <ion-label position="stacked">Especifique el tratamiento *</ion-label>
+              <ion-input [(ngModel)]="registroConsulta.tratamientoOtro" placeholder="Ej. Aplicación de flúor"></ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Indicaciones o Receta (Opcional)</ion-label>
+              <ion-textarea 
+                [(ngModel)]="registroConsulta.receta" 
+                placeholder="Ej. Ibuprofeno 400mg cada 8 horas por 3 días" 
+                rows="2">
+              </ion-textarea>
+            </ion-item>
+          </ion-list>
+
+          <ion-button 
+            expand="block" 
+            color="success" 
+            mode="ios" 
+            style="margin-top: 25px; font-weight: 700;" 
+            (click)="guardarYCompletarConsulta()">
+            <ion-icon name="checkmark-done-outline" slot="start"></ion-icon>
+            Guardar y Completar Consulta
+          </ion-button>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 
 </ion-content>

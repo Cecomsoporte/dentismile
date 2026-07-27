@@ -2,12 +2,12 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, ToastController, AlertController } from '@ionic/angular';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { addIcons } from 'ionicons';
 import { saveOutline, calendarOutline, logOutOutline, medicalOutline, documentTextOutline } from 'ionicons/icons';
 
 import { PacientesService } from '../../services/pacientes';
-import { CitasService } from '../../services/citas'; // 👈 Inyectamos CitasService
+import { CitasService } from '../../services/citas'; 
 import { Cita } from '../../models/cita.model';
 
 @Component({
@@ -16,7 +16,7 @@ import { Cita } from '../../models/cita.model';
   styleUrls: ['./paciente-registro.page.scss'],
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule],
-  providers: [PacientesService, CitasService] // 👈 Proveedor agregado
+  providers: [PacientesService, CitasService] 
 })
 export class PacienteRegistroPage implements OnInit {
   
@@ -33,10 +33,11 @@ export class PacienteRegistroPage implements OnInit {
 
   constructor(
     @Inject(PacientesService) private pacientesService: PacientesService,
-    @Inject(CitasService) private citasService: CitasService, // 👈 Inyectado
-    private alertController: AlertController, // 👈 Inyectado
+    @Inject(CitasService) private citasService: CitasService, 
+    private alertController: AlertController, 
     private toastController: ToastController,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     addIcons({ saveOutline, calendarOutline, logOutOutline, medicalOutline, documentTextOutline });
   }
@@ -44,6 +45,13 @@ export class PacienteRegistroPage implements OnInit {
   async ngOnInit() {
     this.usuarioId = localStorage.getItem('uidUsuario') || '';
     await this.verificarPerfilExistente();
+
+    // 🔹 Si el paciente seleccionó un tratamiento desde el catálogo, abrimos la agenda con ese valor
+    this.route.queryParams.subscribe(params => {
+      if (params['servicio'] && this.isPerfilGuardado) {
+        this.irAAgendarCita(params['servicio']);
+      }
+    });
   }
 
   async verificarPerfilExistente() {
@@ -88,14 +96,43 @@ export class PacienteRegistroPage implements OnInit {
     }
   }
 
-  // ➕ ACCIÓN DIRECTA: Abre el formulario de la cita en esta misma pantalla
-  async irAAgendarCita() {
+  // ➕ ACCIÓN DIRECTA CON CANDADO DE SEGURIDAD INTEGRADO 🛡️
+  async irAAgendarCita(motivoPredefinido: string = '') {
+    try {
+      // 1. Solicitamos la lista completa de citas directo desde Firebase
+      const listaCitasGlobales = await this.citasService.obtenerCitas();
+
+      // 2. Filtramos si este usuario ya cuenta con alguna cita en estado 'Pendiente' o 'Confirmada'
+      const tieneCitaActiva = listaCitasGlobales.some((cita: Cita) => 
+        cita.pacienteId === this.usuarioId && 
+        (cita.estado === 'Pendiente' || cita.estado === 'Confirmada')
+      );
+
+      // 3. Si se encuentra un registro activo, desplegamos la alerta de bloqueo y frenamos la ejecución
+      if (tieneCitaActiva) {
+        const alertaBloqueo = await this.alertController.create({
+          header: 'Cita en Proceso',
+          subHeader: 'Límite de agenda alcanzado',
+          message: 'Por políticas de control en <strong>Dentismile</strong>, no puedes solicitar una nueva consulta si ya tienes un espacio agendado en estado <strong>Pendiente</strong> o <strong>Confirmada</strong>.',
+          buttons: ['Entendido']
+        });
+        await alertaBloqueo.present();
+        return; // Destruye el flujo y evita que aparezca el formulario de captura
+      }
+
+    } catch (err) {
+      console.error('Error al verificar citas previas:', err);
+      this.mostrarToast('No se pudo verificar el estatus de tus citas.', 'danger');
+      return;
+    }
+
+    // 4. Si el validador pasa limpio, procede a pintar el formulario original
     const alert = await this.alertController.create({
       header: `Agendar Cita para: ${this.pacienteData.nombre}`,
       inputs: [
         { name: 'fecha', type: 'date', min: '2026-01-01' },
         { name: 'horaInicio', type: 'time' },
-        { name: 'motivo', type: 'text', placeholder: 'Motivo (Ej. Limpieza, Dolor)' }
+        { name: 'motivo', type: 'text', placeholder: 'Motivo (Ej. Limpieza, Dolor)', value: motivoPredefinido }
       ],
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
@@ -150,14 +187,14 @@ export class PacienteRegistroPage implements OnInit {
     this.router.navigate(['/login']);
   }
 
-  // 🦷 Redirección al catálogo o modal de tratamientos disponibles
+  // 🦷 Redirección al catálogo de tratamientos disponibles
   verTratamientos() {
-    this.router.navigate(['/tratamientos']); // Cambia por tu ruta real de tratamientos si es diferente
+    this.router.navigate(['/pages/tratamientos']); 
   }
 
-  // 📋 Redirección al expediente o historial del propio paciente
+  // 📋 Redirección al historial clínico del paciente
   verHistorialClinico() {
-    this.router.navigate(['/historial-clinico']); // Cambia por tu ruta real de historial si es diferente
+    this.router.navigate(['/pages/historial-clinico']); 
   }
 
   async mostrarToast(mensaje: string, color: string) {

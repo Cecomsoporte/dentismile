@@ -3,10 +3,18 @@ import { roleGuard } from './services/role.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
+  
+  // 🔓 RUTAS PÚBLICAS (Sin restricciones de seguridad para que cualquiera se registre o inicie sesión)
   { 
     path: 'login', 
     loadComponent: () => import('./pages/login/login.page').then(m => m.LoginPage) 
   },
+  {
+    path: 'register',
+    loadComponent: () => import('./pages/register/register.page').then(m => m.RegisterPage)
+  },
+
+  // 🔒 RUTAS PROTEGIDAS (Requieren inicio de sesión y validación de roles)
   { 
     path: 'panel', 
     loadComponent: () => import('./pages/panel/panel.page').then(m => m.PanelPage),
@@ -46,7 +54,6 @@ export const routes: Routes = [
     canActivate: [roleGuard],
     data: { roles: ['Administrador', 'Doctor'] } 
   },
-
   { 
     path: 'tratamientos', 
     loadComponent: () => import('./pages/tratamientos/tratamientos.page').then(m => m.TratamientosPage),
@@ -67,6 +74,10 @@ export const routes: Routes = [
   },
   {
     path: 'paciente-registro',
-    loadComponent: () => import('./pages/paciente-registro/paciente-registro.page').then( m => m.PacienteRegistroPage)
+    loadComponent: () => import('./pages/paciente-registro/paciente-registro.page').then(m => m.PacienteRegistroPage)
+  },
+  {
+    path: 'pages/tratamientos',
+    loadComponent: () => import('./pages/tratamientos/tratamientos.page').then( m => m.TratamientosPage)
   }
 ];

@@ -30,67 +30,14 @@
   opacity: 0.12;
 }
 
-.tooth-1 {
-  width: 140px;
-  top: -30px;
-  left: -30px;
-  transform: rotate(-15deg);
-}
-
-.tooth-2 {
-  width: 90px;
-  top: 15%;
-  right: 5%;
-  transform: rotate(20deg);
-  opacity: 0.09;
-}
-
-.tooth-3 {
-  width: 200px;
-  bottom: -50px;
-  right: -60px;
-  transform: rotate(10deg);
-}
-
-.tooth-4 {
-  width: 70px;
-  bottom: 20%;
-  left: 4%;
-  transform: rotate(-25deg);
-  opacity: 0.09;
-}
-
-.tooth-5 {
-  width: 50px;
-  top: 45%;
-  left: 45%;
-  transform: rotate(8deg);
-  opacity: 0.07;
-}
-
-.tooth-6 {
-  width: 60px;
-  top: 3%;
-  left: 20%;
-  transform: rotate(-10deg);
-  opacity: 0.08;
-}
-
-.tooth-7 {
-  width: 45px;
-  bottom: 5%;
-  left: 30%;
-  transform: rotate(18deg);
-  opacity: 0.07;
-}
-
-.tooth-8 {
-  width: 110px;
-  top: 55%;
-  right: -20px;
-  transform: rotate(-12deg);
-  opacity: 0.08;
-}
+.tooth-1 { width: 140px; top: -30px; left: -30px; transform: rotate(-15deg); }
+.tooth-2 { width: 90px; top: 15%; right: 5%; transform: rotate(20deg); opacity: 0.09; }
+.tooth-3 { width: 200px; bottom: -50px; right: -60px; transform: rotate(10deg); }
+.tooth-4 { width: 70px; bottom: 20%; left: 4%; transform: rotate(-25deg); opacity: 0.09; }
+.tooth-5 { width: 50px; top: 45%; left: 45%; transform: rotate(8deg); opacity: 0.07; }
+.tooth-6 { width: 60px; top: 3%; left: 20%; transform: rotate(-10deg); opacity: 0.08; }
+.tooth-7 { width: 45px; bottom: 5%; left: 30%; transform: rotate(18deg); opacity: 0.07; }
+.tooth-8 { width: 110px; top: 55%; right: -20px; transform: rotate(-12deg); opacity: 0.08; }
 
 /* ==========================
    TARJETA CONTENEDOR BLANCA
@@ -105,11 +52,9 @@
   position: relative;
   z-index: 1;
   background: linear-gradient(180deg, #ffffff 0%, #f3f8fd 100%);
-  border: none;
   border-radius: 24px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   color: #1f2937;
-  overflow: visible;
 }
 
 /* ==========================
@@ -121,7 +66,6 @@
   object-fit: cover;
   border-radius: 50%;
   background: #ffffff;
-  border: none;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   display: block;
   margin: -85px auto 20px;
@@ -151,80 +95,50 @@ h1 {
   --color: #1f2937;
   --placeholder-color: #9ca3af;
   --min-height: 52px;
-  --padding-start: 14px;
-  --inner-padding-end: 14px;
   border-radius: 12px;
   margin-bottom: 15px;
-  border: none;
-  box-shadow: none;
+  --padding-start: 12px;
+  --inner-padding-end: 12px;
 }
 
-.login-item ion-input {
-  color: #1f2937;
-  --placeholder-color: #9ca3af;
+.input-icon {
+  color: #1e88c9;
+  font-size: 20px;
+  margin-right: 8px;
 }
 
-/* ==========================
-   CAPTCHA SECCIÓN
-========================== */
-.captcha-section {
-  text-align: left;
-  margin-bottom: 15px;
-}
-
-.captcha-label {
-  display: block;
-  color: #6b7280;
-  font-size: 12px;
-  font-weight: 600;
-  margin-bottom: 6px;
-  padding-left: 2px;
-}
-
-.captcha-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: #f7f9fc;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 6px 10px;
-}
-
-.captcha-canvas {
-  display: block;
-  flex: 1;
-  border-radius: 8px;
-  filter: blur(0.5px);
-  user-select: none;
-  -webkit-user-select: none;
-}
-
-.captcha-refresh {
-  color: #0288d1;
-  font-size: 24px;
+.input-icon-end {
+  color: #9ca3af;
+  font-size: 20px;
   cursor: pointer;
-  flex-shrink: 0;
-  transition: transform 0.3s ease;
-}
-
-.captcha-refresh:active {
-  transform: rotate(180deg);
 }
 
 /* ==========================
-   BOTÓN AZUL DE INICIO
+   BOTÓN GENERAR CONTRASEÑA
+========================== */
+.generar-btn {
+  --border-color: #0288d1;
+  --border-width: 1.5px;
+  --border-radius: 12px;
+  --color: #0288d1;
+  height: 46px;
+  font-weight: 600;
+  text-transform: none;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+/* ==========================
+   BOTÓN AZUL DE ACCIÓN
 ========================== */
 .login-btn {
   --background: linear-gradient(135deg, #4fc3f7 0%, #0288d1 100%);
   --background-hover: linear-gradient(135deg, #42b3e5 0%, #0277b8 100%);
-  --background-activated: #0277b8;
   --border-radius: 14px;
   --color: #ffffff;
   height: 52px;
   font-weight: 700;
   text-transform: none;
-  margin-top: 10px;
   box-shadow: 0 6px 16px rgba(2, 136, 209, 0.35);
 }
 
@@ -234,25 +148,26 @@ h1 {
 .acciones {
   display: flex;
   justify-content: center;
-  flex-wrap: wrap;
-  gap: 5px 10px;
-  align-items: center;
-  margin-top: 12px;
-  margin-bottom: 5px;
+  margin-top: 15px;
 }
 
-.accion-btn {
+.accion-btn-back {
   --color: #0288d1;
-  font-size: 12px;
+  font-size: 13px;
   text-transform: none;
+  font-weight: 600;
+  
+  ion-icon {
+    font-size: 16px;
+    margin-right: 4px;
+  }
 }
 
 /* ==========================
-   RESULTADOS DE VALIDACIÓN
+   RESULTADOS / ALERTAS
 ========================== */
 .resultado {
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-top: 15px;
   color: #dc2626;
   font-weight: 600;
   font-size: 13px;
@@ -274,7 +189,7 @@ h1 {
    FOOTER
 ========================== */
 .footer {
-  margin-top: 20px;
+  margin-top: 25px;
   text-align: center;
   color: #9ca3af;
   font-size: 12px;

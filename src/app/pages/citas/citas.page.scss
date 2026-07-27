@@ -1,0 +1,135 @@
+/* ==========================================
+   ESTILOS GENERALES Y TARJETAS DE AGEDA
+   ========================================== */
+
+// Contenedor principal
+ion-content {
+  --background: #f8fafc;
+}
+
+// Estilos de tarjetas en la agenda
+ion-card {
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  }
+}
+
+// Avatar con inicial del paciente
+ion-avatar {
+  background: #eef4ff;
+  color: var(--ion-color-primary, #1e62ff);
+  border: 1px solid #b3ccff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  width: 44px;
+  height: 44px;
+  font-size: 1.1rem;
+}
+
+// Badges de estado de la cita
+ion-badge {
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  border-radius: 8px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+/* ==========================================
+   ESTILOS PARA EL MODAL DE FINALIZACIÓN
+   ========================================== */
+
+ion-modal {
+  --border-radius: 16px;
+  
+  // Encabezado del Modal
+  ion-toolbar {
+    --background: var(--ion-color-primary, #1e62ff);
+    --color: #ffffff;
+
+    ion-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    ion-button {
+      --color: #ffffff;
+      font-weight: 600;
+    }
+  }
+
+  // Ficha Resumen del Paciente dentro del Modal
+  ion-card {
+    border-left: 5px solid var(--ion-color-primary, #1e62ff);
+    
+    h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    p {
+      font-size: 0.85rem;
+      color: #64748b;
+    }
+
+    ion-icon {
+      font-size: 2.5rem;
+    }
+  }
+
+  // Estilos de los campos de entrada (Inputs, Select, Textareas)
+  ion-list {
+    background: transparent;
+
+    ion-item {
+      --background: #ffffff;
+      --border-radius: 12px;
+      margin-bottom: 12px;
+      border: 1px solid #e2e8f0;
+      transition: border-color 0.2s ease;
+
+      &:focus-within {
+        border-color: var(--ion-color-primary, #1e62ff);
+      }
+
+      ion-label {
+        font-weight: 600 !important;
+        color: #334155 !important;
+        font-size: 0.9rem !important;
+      }
+
+      ion-textarea,
+      ion-input,
+      ion-select {
+        font-size: 0.95rem;
+        color: #1e293b;
+      }
+    }
+  }
+
+  // Botón Principal de Cierre
+  ion-button[color="success"] {
+    --border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.25);
+  }
+}
+ion-popover.select-popover {
+  --width: 320px; /* Le da más ancho al menú flotante */
+
+  ion-list ion-item {
+    ion-label {
+      white-space: normal !important; /* Permite que el texto se ajuste si es largo */
+      font-size: 0.9rem;
+    }
+  }
+}

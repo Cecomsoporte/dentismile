@@ -6,6 +6,7 @@ export interface Cita {
   doctorId: string;        // ID del médico asignado
   fecha: string;           // Fecha de la cita (YYYY-MM-DD)
   hora?: string;    // Hora de la cita (HH:MM)
+  receta?: string;
           
   horaInicio: string;
   horaFin : string;

@@ -1,82 +1,135 @@
 <ion-content class="login-content" [fullscreen]="true">
 
-  <div class="login-container">
-
-    <img src="assets/icon/dental.jpg" alt="Dentismile" class="logo">
-
-    <h1>Dentismile</h1>
-    <p class="subtitulo">Sistema de Gestión Dental</p>
-
-    <ion-item lines="none" class="login-item">
-      <ion-input
-        type="email"
-        [(ngModel)]="usuario"
-        placeholder="Usuario o Correo Electrónico">
-      </ion-input>
-    </ion-item>
-
-    <ion-item lines="none" class="login-item">
-      <ion-input
-        type="password"
-        [(ngModel)]="password"
-        placeholder="Contraseña"
-        [disabled]="bloqueado"
-        (ionInput)="validarPassword()">
-      </ion-input>
-    </ion-item>
-
-    <ion-button
-      expand="block"
-      class="login-btn"
-      [disabled]="bloqueado"
-      (click)="iniciarSesion()">
-      Iniciar Sesión
-    </ion-button>
-
-    <div class="acciones">
-      <ion-button
-        fill="clear"
-        size="small"
-        class="accion-btn"
-        (click)="crearCuenta()">
-        Crear Cuenta
-      </ion-button>
-
-      <ion-button
-        fill="clear"
-        size="small"
-        class="accion-btn"
-        (click)="recuperarPassword()">
-        ¿Olvidaste tu contraseña?
-      </ion-button>
-    </div>
-
-    <div class="resultado" *ngIf="resultado">
-      <p [innerHTML]="resultado"></p>
-    </div>
-
-    <ion-button
-      expand="block"
-      fill="outline"
-      class="generar-btn"
-      (click)="generarPassword()">
-      Generar Contraseña Segura
-    </ion-button>
-
-    <ion-item lines="none" class="login-item">
-      <ion-input
-        [(ngModel)]="generada"
-        readonly
-        placeholder="Contraseña Generada">
-      </ion-input>
-    </ion-item>
-
-    <div class="footer">
-      © 2026 Dentismile
-      <br>
-      Consultorio Dental
-    </div>
-
+  <!-- DECORACIÓN DE FONDO: dientes sutiles -->
+  <div class="bg-teeth" aria-hidden="true">
+    <svg class="tooth tooth-1" viewBox="0 0 64 64">
+      <path d="M32 4C22 4 14 10 14 20c0 8 3 14 3 22 0 6 2 10 5 10 3 0 4-6 5-12 1-4 3-6 5-6s4 2 5 6c1 6 2 12 5 12 3 0 5-4 5-10 0-8 3-14 3-22C50 10 42 4 32 4z"/>
+    </svg>
+    <svg class="tooth tooth-2" viewBox="0 0 64 64">
+      <path d="M32 4C22 4 14 10 14 20c0 8 3 14 3 22 0 6 2 10 5 10 3 0 4-6 5-12 1-4 3-6 5-6s4 2 5 6c1 6 2 12 5 12 3 0 5-4 5-10 0-8 3-14 3-22C50 10 42 4 32 4z"/>
+    </svg>
+    <svg class="tooth tooth-3" viewBox="0 0 64 64">
+      <path d="M32 4C22 4 14 10 14 20c0 8 3 14 3 22 0 6 2 10 5 10 3 0 4-6 5-12 1-4 3-6 5-6s4 2 5 6c1 6 2 12 5 12 3 0 5-4 5-10 0-8 3-14 3-22C50 10 42 4 32 4z"/>
+    </svg>
+    <svg class="tooth tooth-4" viewBox="0 0 64 64">
+      <path d="M32 4C22 4 14 10 14 20c0 8 3 14 3 22 0 6 2 10 5 10 3 0 4-6 5-12 1-4 3-6 5-6s4 2 5 6c1 6 2 12 5 12 3 0 5-4 5-10 0-8 3-14 3-22C50 10 42 4 32 4z"/>
+    </svg>
+    <svg class="tooth tooth-5" viewBox="0 0 64 64">
+      <path d="M32 4C22 4 14 10 14 20c0 8 3 14 3 22 0 6 2 10 5 10 3 0 4-6 5-12 1-4 3-6 5-6s4 2 5 6c1 6 2 12 5 12 3 0 5-4 5-10 0-8 3-14 3-22C50 10 42 4 32 4z"/>
+    </svg>
+    <svg class="tooth tooth-6" viewBox="0 0 64 64">
+      <path d="M32 4C22 4 14 10 14 20c0 8 3 14 3 22 0 6 2 10 5 10 3 0 4-6 5-12 1-4 3-6 5-6s4 2 5 6c1 6 2 12 5 12 3 0 5-4 5-10 0-8 3-14 3-22C50 10 42 4 32 4z"/>
+    </svg>
+    <svg class="tooth tooth-7" viewBox="0 0 64 64">
+      <path d="M32 4C22 4 14 10 14 20c0 8 3 14 3 22 0 6 2 10 5 10 3 0 4-6 5-12 1-4 3-6 5-6s4 2 5 6c1 6 2 12 5 12 3 0 5-4 5-10 0-8 3-14 3-22C50 10 42 4 32 4z"/>
+    </svg>
+    <svg class="tooth tooth-8" viewBox="0 0 64 64">
+      <path d="M32 4C22 4 14 10 14 20c0 8 3 14 3 22 0 6 2 10 5 10 3 0 4-6 5-12 1-4 3-6 5-6s4 2 5 6c1 6 2 12 5 12 3 0 5-4 5-10 0-8 3-14 3-22C50 10 42 4 32 4z"/>
+    </svg>
   </div>
+
+  <!-- 🚀 GRID PRINCIPAL Y COLUMNA CONTENEDORA -->
+  <ion-grid class="ion-no-padding" style="height: 100%;">
+    <ion-row class="ion-justify-content-center ion-align-items-center" style="height: 100%;">
+      <ion-col size="12" size-sm="10" size-md="8" size-lg="5">
+
+        <div class="login-container">
+
+          <!-- Logo adaptado de Dentismile -->
+          <img src="assets/icon/dental.jpg" alt="Dentismile" class="logo">
+
+          <h1>Dentismile</h1>
+          <p class="subtitulo">Sistema de Gestión Dental</p>
+
+          <!-- Campo de correo/usuario -->
+          <ion-item lines="none" class="login-item">
+            <ion-input
+              type="email"
+              [(ngModel)]="usuario"
+              name="usuario"
+              placeholder="Usuario o Correo Electrónico">
+            </ion-input>
+          </ion-item>
+
+          <!-- Campo de contraseña -->
+          <ion-item lines="none" class="login-item">
+            <ion-input
+              type="password"
+              [(ngModel)]="password"
+              name="password"
+              placeholder="Contraseña"
+              [disabled]="bloqueado"
+              (ionInput)="validarPassword()">
+            </ion-input>
+          </ion-item>
+
+          <!-- SECCIÓN DEL CAPTCHA -->
+          <div class="captcha-section">
+            <span class="captcha-label">Código de seguridad</span>
+            <div class="captcha-container">
+              <canvas #captchaCanvas class="captcha-canvas"></canvas>
+              <ion-icon
+                name="refresh-outline"
+                class="captcha-refresh"
+                (click)="generarCaptcha()">
+              </ion-icon>
+            </div>
+          </div>
+
+          <!-- Entrada para el Captcha -->
+          <ion-item lines="none" class="login-item">
+            <ion-input
+              [(ngModel)]="codigoIngresado"
+              name="codigoIngresado"
+              placeholder="Escribe el código de la imagen"
+              maxlength="5">
+            </ion-input>
+          </ion-item>
+
+          <!-- Botón Principal -->
+          <ion-button
+            expand="block"
+            class="login-btn"
+            [disabled]="bloqueado"
+            (click)="iniciarSesion()">
+            Iniciar Sesión
+          </ion-button>
+
+          <!-- Acciones secundarias -->
+          <div class="acciones">
+            <ion-button
+              fill="clear"
+              size="small"
+              class="accion-btn"
+              routerLink="/register">
+              ¿No tienes cuenta? Regístrate
+            </ion-button>
+
+            <ion-button
+              fill="clear"
+              size="small"
+              class="accion-btn"
+              (click)="recuperarPassword()">
+              ¿Olvidaste tu contraseña?
+            </ion-button>
+          </div>
+
+          <!-- Alertas de salida o mensajes de error/éxito -->
+          <div class="resultado" [class.resultado-ok]="resultadoOk" *ngIf="resultado">
+            <p [innerHTML]="resultado"></p>
+          </div>
+
+          <!-- Pie de página -->
+          <div class="footer">
+            © 2026 Dentismile
+            <br>
+            Consultorio Dental
+          </div>
+
+        </div>
+
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 
 </ion-content>

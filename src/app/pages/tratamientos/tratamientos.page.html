@@ -1,13 +1,66 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>tratamientos</ion-title>
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/paciente-registro"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Tratamientos Disponibles</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">tratamientos</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding bg-light">
+
+  <div class="header-info ion-text-center ion-margin-bottom">
+    <h2>Catálogo de Servicios</h2>
+    <p>Conoce nuestros procedimientos disponibles y agenda tu cita fácilmente.</p>
+  </div>
+
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12" size-md="6" *ngFor="let t of listaTratamientos">
+        <ion-card class="tratamiento-card">
+          
+          <ion-card-header>
+            <!-- 👈 USO DE ION-CARD-SUBTITLE PARA RESOLVER EL ERROR DE COMPILACIÓN -->
+            <ion-card-subtitle class="card-top-bar">
+              <ion-badge [color]="getColorCategoria ? getColorCategoria(t.categoria) : 'tertiary'">
+                {{ t.categoria }}
+              </ion-badge>
+            </ion-card-subtitle>
+
+            <ion-card-title class="titulo-tratamiento">
+              <ion-icon name="medkit-outline" color="primary"></ion-icon>
+              {{ t.nombre }}
+            </ion-card-title>
+          </ion-card-header>
+
+          <ion-card-content>
+            <p class="descripcion">{{ t.descripcion }}</p>
+
+            <div class="detalles-box">
+              <div class="detalle-item">
+                <ion-icon name="time-outline" color="medium"></ion-icon>
+                <span>{{ t.duracion }}</span>
+              </div>
+              <div class="detalle-item">
+                <ion-icon name="cash-outline" color="success"></ion-icon>
+                <span><strong>${{ t.precioEstimado }} MXN</strong></span>
+              </div>
+            </div>
+
+            <ion-button 
+              expand="block" 
+              shape="round" 
+              color="primary" 
+              class="ion-margin-top"
+              (click)="agendarTratamiento(t.nombre)">
+              <ion-icon name="calendar-outline" slot="start"></ion-icon>
+              Agendar este Tratamiento
+            </ion-button>
+          </ion-card-content>
+
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
 </ion-content>

@@ -1,67 +1,61 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { 
-  IonicModule, 
-  AlertController, 
-  ToastController 
+import {
+  IonicModule,
+  AlertController,
+  ToastController
 } from '@ionic/angular';
-
 // 🌟 REGISTRAMOS medicalOutline PARA TU NUEVO BOTÓN CLÍNICO:
 import { addIcons } from 'ionicons';
-import { 
-  eyeOutline, 
-  createOutline, 
-  trashOutline, 
-  callOutline, 
-  mailOutline, 
-  addCircleOutline, 
+import {
+  eyeOutline,
+  createOutline,
+  trashOutline,
+  callOutline,
+  mailOutline,
+  addCircleOutline,
   peopleOutline,
   medicalOutline // 👈 Agregado aquí
 } from 'ionicons/icons';
-
-import { PacientesService } from '../../services/pacientes'; 
+import { PacientesService } from '../../services/pacientes';
 import { Paciente } from '../../models/paciente.model';
 import { RouterModule } from '@angular/router'; // 👈 Asegura la navegación por enlaces
-
 @Component({
   selector: 'app-pacientes',
   templateUrl: './pacientes.page.html',
   styleUrls: ['./pacientes.page.scss'],
   standalone: true,
   // 🌟 Agregamos RouterModule en los imports para que el HTML reconozca el routerLink
-  imports: [IonicModule, CommonModule, FormsModule, RouterModule], 
+  imports: [IonicModule, CommonModule, FormsModule, RouterModule],
   providers: [PacientesService]
 })
 export class PacientesPage implements OnInit {
   listaPacientes: Paciente[] = [];
   listaPacientesRespaldo: Paciente[] = []; // 🔎 Para el filtro del buscador sin perder los datos reales
-  esAdmin: boolean = false; 
-
+  esAdmin: boolean = false;
   constructor(
     @Inject(PacientesService) private pacientesService: PacientesService,
     private alertController: AlertController,
     private toastController: ToastController
-  ) { 
+  ) {
      // 🌟 Inyectamos medicalOutline en el core de Ionic para renderizar el icono
-     addIcons({ 
-       eyeOutline, 
-       createOutline, 
-       trashOutline, 
-       callOutline, 
-       mailOutline, 
-       addCircleOutline, 
+     addIcons({
+       eyeOutline,
+       createOutline,
+       trashOutline,
+       callOutline,
+       mailOutline,
+       addCircleOutline,
        peopleOutline,
        medicalOutline // 👈 Registrado aquí
-     });   
+     });  
   }
-
   ngOnInit() {
-    const rol = localStorage.getItem('rolUsuario'); 
+    const rol = localStorage.getItem('rolUsuario');
     this.esAdmin = (rol === 'Administrador');
     this.cargarPacientes();
   }
-
   // 📋 FUNCIÓN LEER: Trae la lista de Firebase
   async cargarPacientes() {
     try {
@@ -71,16 +65,13 @@ export class PacientesPage implements OnInit {
       this.mostrarToast('Error al cargar la base de datos.', 'danger');
     }
   }
-
   // 🔎 NUEVA FUNCIÓN: Filtra en tiempo real los pacientes en pantalla
   buscarPaciente(event: any) {
     const texto = event.target.value?.toLowerCase().trim() || '';
-
     if (texto === '') {
       this.listaPacientes = [...this.listaPacientesRespaldo]; // Si borran la búsqueda, regresa la lista completa
       return;
     }
-
     // Filtra por nombre, apellido o teléfono
     this.listaPacientes = this.listaPacientesRespaldo.filter(paciente => {
       return (
@@ -90,7 +81,6 @@ export class PacientesPage implements OnInit {
       );
     });
   }
-
   // 🔎 NUEVA FUNCIÓN: Alerta interactiva para consultar la información completa del paciente
   async verDetallesPaciente(paciente: Paciente) {
     const alert = await this.alertController.create({
@@ -103,10 +93,8 @@ export class PacientesPage implements OnInit {
       `,
       buttons: ['Cerrar']
     });
-
     await alert.present();
   }
-
   // ➕ FUNCIÓN CREAR
   async abrirFormularioAgregar() {
     const alert = await this.alertController.create({
@@ -127,8 +115,7 @@ export class PacientesPage implements OnInit {
               this.mostrarToast('El nombre y apellido son obligatorios', 'warning');
               return false;
             }
-            
-            const nuevoPaciente: Paciente = {
+           const nuevoPaciente: Paciente = {
               nombre: data.nombre,
               apellido: data.apellido,
               telefono: data.telefono,
@@ -138,26 +125,22 @@ export class PacientesPage implements OnInit {
   rol: 'Paciente',
   perfilCompleto: false // Al crearse desde la administración, inicia
             };
-
             await this.pacientesService.agregarPaciente(nuevoPaciente);
             this.mostrarToast('Paciente registrado con éxito', 'success');
-            this.cargarPacientes(); 
-            return true; 
+            this.cargarPacientes();
+            return true;
           }
         }
       ]
     });
-
     await alert.present();
   }
-
   // ❌ FUNCIÓN ELIMINAR
   async clickEliminar(id: string) {
     if (!this.esAdmin) {
       this.mostrarToast('Acción denegada. Solo administradores.', 'danger');
       return;
     }
-
     const alert = await this.alertController.create({
       header: '¿Confirmar eliminación?',
       message: 'Esta acción borrará de forma permanente el expediente de Firestore.',
@@ -169,16 +152,14 @@ export class PacientesPage implements OnInit {
           handler: async () => {
             await this.pacientesService.eliminarPaciente(id);
             this.mostrarToast('Expediente eliminado', 'success');
-            this.cargarPacientes(); 
-            return true; 
+            this.cargarPacientes();
+            return true;
           }
         }
       ]
     });
-
     await alert.present();
   }
-
   // 📝 FUNCIÓN ACTUALIZAR
   async abrirFormularioEditar(paciente: Paciente) {
     const alert = await this.alertController.create({
@@ -189,7 +170,7 @@ export class PacientesPage implements OnInit {
         { name: 'telefono', type: 'tel', value: paciente.telefono, placeholder: 'Teléfono' },
         { name: 'correo', type: 'email', value: paciente.correo, placeholder: 'Correo' }
       ],
-      buttons: [
+     buttons: [
         { text: 'Cancelar', role: 'cancel' },
         {
           text: 'Actualizar',
@@ -200,19 +181,16 @@ export class PacientesPage implements OnInit {
               telefono: data.telefono,
               correo: data.correo
             };
-
             await this.pacientesService.actualizarPaciente(paciente.id!, cambios);
             this.mostrarToast('Datos actualizados correctamente', 'success');
             this.cargarPacientes();
-            return true; 
+            return true;
           }
         }
       ]
     });
-
     await alert.present();
   }
-
   async mostrarToast(mensaje: string, color: string) {
     const toast = await this.toastController.create({
       message: mensaje,
@@ -222,4 +200,4 @@ export class PacientesPage implements OnInit {
     });
     await toast.present();
   }
-}
+} 

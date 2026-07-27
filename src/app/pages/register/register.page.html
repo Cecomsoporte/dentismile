@@ -1,0 +1,112 @@
+<ion-content class="login-content" [fullscreen]="true">
+
+  <!-- DECORACIÓN DE FONDO: dientes sutiles -->
+  <div class="bg-teeth" aria-hidden="true">
+    <svg class="tooth tooth-1" viewBox="0 0 64 64">
+      <path d="M32 4C22 4 14 10 14 20c0 8 3 14 3 22 0 6 2 10 5 10 3 0 4-6 5-12 1-4 3-6 5-6s4 2 5 6c1 6 2 12 5 12 3 0 5-4 5-10 0-8 3-14 3-22C50 10 42 4 32 4z"/>
+    </svg>
+    <svg class="tooth tooth-2" viewBox="0 0 64 64">
+      <path d="M32 4C22 4 14 10 14 20c0 8 3 14 3 22 0 6 2 10 5 10 3 0 4-6 5-12 1-4 3-6 5-6s4 2 5 6c1 6 2 12 5 12 3 0 5-4 5-10 0-8 3-14 3-22C50 10 42 4 32 4z"/>
+    </svg>
+    <svg class="tooth tooth-3" viewBox="0 0 64 64">
+      <path d="M32 4C22 4 14 10 14 20c0 8 3 14 3 22 0 6 2 10 5 10 3 0 4-6 5-12 1-4 3-6 5-6s4 2 5 6c1 6 2 12 5 12 3 0 5-4 5-10 0-8 3-14 3-22C50 10 42 4 32 4z"/>
+    </svg>
+    <svg class="tooth tooth-4" viewBox="0 0 64 64">
+      <path d="M32 4C22 4 14 10 14 20c0 8 3 14 3 22 0 6 2 10 5 10 3 0 4-6 5-12 1-4 3-6 5-6s4 2 5 6c1 6 2 12 5 12 3 0 5-4 5-10 0-8 3-14 3-22C50 10 42 4 32 4z"/>
+    </svg>
+    <svg class="tooth tooth-5" viewBox="0 0 64 64">
+      <path d="M32 4C22 4 14 10 14 20c0 8 3 14 3 22 0 6 2 10 5 10 3 0 4-6 5-12 1-4 3-6 5-6s4 2 5 6c1 6 2 12 5 12 3 0 5-4 5-10 0-8 3-14 3-22C50 10 42 4 32 4z"/>
+    </svg>
+    <svg class="tooth tooth-6" viewBox="0 0 64 64">
+      <path d="M32 4C22 4 14 10 14 20c0 8 3 14 3 22 0 6 2 10 5 10 3 0 4-6 5-12 1-4 3-6 5-6s4 2 5 6c1 6 2 12 5 12 3 0 5-4 5-10 0-8 3-14 3-22C50 10 42 4 32 4z"/>
+    </svg>
+    <svg class="tooth tooth-7" viewBox="0 0 64 64">
+      <path d="M32 4C22 4 14 10 14 20c0 8 3 14 3 22 0 6 2 10 5 10 3 0 4-6 5-12 1-4 3-6 5-6s4 2 5 6c1 6 2 12 5 12 3 0 5-4 5-10 0-8 3-14 3-22C50 10 42 4 32 4z"/>
+    </svg>
+    <svg class="tooth tooth-8" viewBox="0 0 64 64">
+      <path d="M32 4C22 4 14 10 14 20c0 8 3 14 3 22 0 6 2 10 5 10 3 0 4-6 5-12 1-4 3-6 5-6s4 2 5 6c1 6 2 12 5 12 3 0 5-4 5-10 0-8 3-14 3-22C50 10 42 4 32 4z"/>
+    </svg>
+  </div>
+
+  <div class="login-container">
+
+    <!-- Logo de Dentismile -->
+    <img src="assets/icon/dental.jpg" alt="Dentismile" class="logo">
+
+    <h1>Crear Cuenta</h1>
+    <p class="subtitulo">Regístrate para gestionar tus citas</p>
+
+    <!-- Campo de correo electrónico -->
+    <ion-item lines="none" class="login-item">
+      <ion-icon name="mail-outline" slot="start" class="input-icon"></ion-icon>
+      <ion-input
+        type="email"
+        [(ngModel)]="email"
+        name="email"
+        placeholder="Correo Electrónico">
+      </ion-input>
+    </ion-item>
+
+    <!-- Campo de contraseña con opción de ver/ocultar -->
+    <ion-item lines="none" class="login-item">
+      <ion-icon name="lock-closed-outline" slot="start" class="input-icon"></ion-icon>
+      <ion-input
+        [type]="mostrarPassword ? 'text' : 'password'"
+        [(ngModel)]="password"
+        name="password"
+        placeholder="Contraseña"
+        (ionInput)="validarPassword()">
+      </ion-input>
+      <ion-icon 
+        [name]="mostrarPassword ? 'eye-off-outline' : 'eye-outline'" 
+        slot="end" 
+        class="input-icon-end" 
+        (click)="toggleMostrarPassword()">
+      </ion-icon>
+    </ion-item>
+
+    <!-- Botón Generar Contraseña Segura (Borde azul) -->
+    <ion-button
+      expand="block"
+      fill="outline"
+      class="generar-btn"
+      (click)="generarPasswordSegura()">
+      <ion-icon name="key-outline" slot="start"></ion-icon>
+      Generar Contraseña Segura
+    </ion-button>
+
+    <!-- Botón Principal: Crear Cuenta -->
+    <ion-button
+      expand="block"
+      class="login-btn"
+      (click)="registrarUsuario()">
+      Crear Cuenta
+    </ion-button>
+
+    <!-- Enlace para volver al Login -->
+    <div class="acciones">
+      <ion-button
+        fill="clear"
+        size="small"
+        class="accion-btn-back"
+        routerLink="/login">
+        <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
+        Ya tengo cuenta, Iniciar sesión
+      </ion-button>
+    </div>
+
+    <!-- Indicador visual de seguridad o errores -->
+    <div class="resultado" [class.resultado-ok]="resultadoOk" *ngIf="resultado">
+      <p [innerHTML]="resultado"></p>
+    </div>
+
+    <!-- Pie de página -->
+    <div class="footer">
+      © 2026 Dentismile
+      <br>
+      Consultorio Dental
+    </div>
+
+  </div>
+
+</ion-content>
