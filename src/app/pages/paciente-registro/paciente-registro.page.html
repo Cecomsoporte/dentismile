@@ -63,6 +63,34 @@
     <!-- 🌟 Menú de opciones interactivo del paciente -->
     <ion-row class="ion-justify-content-center ion-margin-top" *ngIf="isPerfilGuardado">
       <ion-col size="12" size-md="8" size-lg="6">
+
+        <!-- 📅 TARJETA DE PRÓXIMA CITA (Se muestra automáticamente si el paciente agendó una cita) -->
+        <ion-card *ngIf="proximaCita" style="border-radius: 16px; background: #ffffff; border-left: 6px solid #10b981; box-shadow: 0 4px 15px rgba(0,0,0,0.06); margin-bottom: 20px;">
+          <ion-card-header style="padding-bottom: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="color: #059669; font-weight: 700; font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 4px;">
+                <ion-icon name="calendar-outline"></ion-icon> Tu Próxima Cita
+              </span>
+              <ion-badge [color]="proximaCita.estado === 'Confirmada' ? 'success' : 'warning'" style="font-size: 11px; padding: 4px 8px;">
+                {{ proximaCita.estado || 'Pendiente' }}
+              </ion-badge>
+            </div>
+            <ion-card-title style="font-size: 1.2em; font-weight: 700; color: #1f2937; margin-top: 6px;">
+              {{ proximaCita.motivoConsulta || proximaCita.tratamiento || 'Consulta Dental' }}
+            </ion-card-title>
+          </ion-card-header>
+
+          <ion-card-content style="padding-top: 0;">
+            <div style="background: #f8fafc; border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 6px; font-size: 0.95em; color: #475569;">
+              <div>📅 <strong>Fecha:</strong> {{ proximaCita.fecha }}</div>
+              <div>⏰ <strong>Hora:</strong> {{ proximaCita.horaInicio || proximaCita.hora }}</div>
+              <div *ngIf="proximaCita.nombreDoctor && proximaCita.nombreDoctor !== 'Pendiente asignación'">
+                👨‍⚕️ <strong>Doctor:</strong> {{ proximaCita.nombreDoctor }}
+              </div>
+            </div>
+          </ion-card-content>
+        </ion-card>
+
         <h3 style="font-weight: 700; color: #2d3748; margin-left: 8px; margin-bottom: 16px;">Mis Opciones</h3>
         
         <div style="display: flex; flex-direction: column; gap: 12px;">

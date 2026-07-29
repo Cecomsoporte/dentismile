@@ -31,6 +31,9 @@ export class PacienteRegistroPage implements OnInit {
   usuarioId: string = '';       
   isPerfilGuardado: boolean = false; 
 
+  // 📌 Propiedad para renderizar la tarjeta de "Tu Próxima Cita" en la vista HTML
+  proximaCita: Cita | null = null;
+
   constructor(
     @Inject(PacientesService) private pacientesService: PacientesService,
     @Inject(CitasService) private citasService: CitasService, 
@@ -45,6 +48,7 @@ export class PacienteRegistroPage implements OnInit {
   async ngOnInit() {
     this.usuarioId = localStorage.getItem('uidUsuario') || '';
     await this.verificarPerfilExistente();
+    await this.cargarProximaCita();
 
     // 🔹 Si el paciente seleccionó un tratamiento desde el catálogo, abrimos la agenda con ese valor
     this.route.queryParams.subscribe(params => {
@@ -52,6 +56,13 @@ export class PacienteRegistroPage implements OnInit {
         this.irAAgendarCita(params['servicio']);
       }
     });
+  }
+
+  // 🔄 Se ejecuta automáticamente cada vez que el paciente regresa a esta vista
+  async ionViewWillEnter() {
+    if (this.usuarioId) {
+      await this.cargarProximaCita();
+    }
   }
 
   async verificarPerfilExistente() {
@@ -66,6 +77,29 @@ export class PacienteRegistroPage implements OnInit {
       }
     } catch (error) {
       console.error('Error al validar el perfil:', error);
+    }
+  }
+
+  // 🔍 Carga la cita activa para el banner superior
+  async cargarProximaCita() {
+    if (!this.usuarioId) return;
+    try {
+      const todasLasCitas = await this.citasService.obtenerCitas();
+      
+      // Buscamos si existe alguna cita del paciente activa
+      const citasUsuario = todasLasCitas.filter(
+        (cita: Cita) => cita.pacienteId === this.usuarioId && 
+        (cita.estado === 'Pendiente' || cita.estado === 'Confirmada')
+      );
+
+      if (citasUsuario.length > 0) {
+        // Asignamos la cita activa encontrada
+        this.proximaCita = citasUsuario[0];
+      } else {
+        this.proximaCita = null;
+      }
+    } catch (error) {
+      console.error('Error al obtener la cita del paciente:', error);
     }
   }
 
@@ -113,7 +147,7 @@ export class PacienteRegistroPage implements OnInit {
         const alertaBloqueo = await this.alertController.create({
           header: 'Cita en Proceso',
           subHeader: 'Límite de agenda alcanzado',
-          message: 'Por políticas de control en <strong>Dentismile</strong>, no puedes solicitar una nueva consulta si ya tienes un espacio agendado en estado <strong>Pendiente</strong> o <strong>Confirmada</strong>.',
+          message: 'Por políticas de control en Dentismile, no puedes solicitar una nueva consulta si ya tienes un espacio agendado en estado Pendiente o Confirmada.',
           buttons: ['Entendido']
         });
         await alertaBloqueo.present();
@@ -166,6 +200,10 @@ export class PacienteRegistroPage implements OnInit {
             try {
               await this.citasService.agregarCita(nuevaCita);
               this.mostrarToast('¡Solicitud enviada! En espera de validación por recepción.', 'success');
+              
+              // 🔄 Actualizamos la pantalla de inmediato para mostrar el banner de "Tu Próxima Cita"
+              await this.cargarProximaCita();
+              
               return true;
             } catch (err) {
               console.error('Error al agendar cita:', err);

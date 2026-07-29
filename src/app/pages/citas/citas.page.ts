@@ -345,7 +345,7 @@ export class CitasPage implements OnInit {
       pacienteId: this.pacienteSeleccionadoObj?.id || 'PACIENTE_TEMP_ID',
       nombrePaciente: nombreFinal,
       doctorId: idDoctorActual,
-      nombreDoctor: 'Dr. Alejandro Ortega',
+      nombreDoctor: 'Dr. Sandoval',
       fecha: this.nuevaCita.fecha,
       horaInicio: this.nuevaCita.horaInicio,
       horaFin: horaFinCalculada,
