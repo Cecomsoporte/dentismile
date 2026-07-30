@@ -15,10 +15,10 @@ import {
   personCircleOutline,
   eyeOutline,
   medkitOutline,
-  cashOutline
+  cashOutline,
+  logoWhatsapp // 👈 1. Icono de WhatsApp agregado
 } from 'ionicons/icons';
 
-// 🚀 IMPORTACIÓN INDIVIDUAL Y PURA DE COMPONENTES STANDALONE DE IONIC
 import {
   IonContent,
   IonHeader,
@@ -61,7 +61,6 @@ import { Paciente } from '../../models/paciente.model';
   imports: [
     CommonModule,
     FormsModule,
-    // Componentes UI de Ionic registrados formalmente
     IonContent,
     IonHeader,
     IonToolbar,
@@ -100,12 +99,10 @@ export class CitasPage implements OnInit {
   fechasDestacadas: any[] = []; 
   fechaFiltroActual: string = ''; 
 
-  // 🔍 VARIABLES PARA LA BÚSQUEDA INTELIGENTE DE PACIENTES
   busquedaPaciente: string = '';
   pacientesFiltrados: Paciente[] = [];
   pacienteSeleccionadoObj: Paciente | null = null;
 
-  // 📅 MODAL DE AGENDAR NUEVA CITA
   isAgendarModalOpen: boolean = false;
   nuevaCita = {
     nombrePaciente: '',
@@ -115,11 +112,9 @@ export class CitasPage implements OnInit {
     motivoConsulta: ''
   };
 
-  // 🩺 MODAL DE FINALIZAR CONSULTA
   isFinalizarModalOpen: boolean = false;
   citaSeleccionada: Cita | null = null;
 
-  // 🎨 MODAL VISUAL DEL CATÁLOGO
   isCatalogoModalOpen: boolean = false;
 
   registroConsulta = {
@@ -129,7 +124,6 @@ export class CitasPage implements OnInit {
     receta: ''
   };
 
-  // 📋 CATÁLOGO ENRIQUECIDO CON DATOS VISUALES
   catalogoTratamientos = [
     { 
       nombre: 'Limpieza Dental Ultrasónica', 
@@ -178,7 +172,8 @@ export class CitasPage implements OnInit {
       personCircleOutline,
       eyeOutline,
       medkitOutline,
-      cashOutline
+      cashOutline,
+      logoWhatsapp // 👈 1. Registro del icono
     });
   }
 
@@ -245,9 +240,34 @@ export class CitasPage implements OnInit {
     this.listaCitasFiltradas = [...this.listaCitas];
   }
 
-  // 📅 MÉTODOS DEL MODAL AGENDAR CITA
+  // 📲 2. NUEVA FUNCIÓN PARA ENVIAR RECORDATORIO POR WHATSAPP
+  enviarRecordatorioWhatsApp(cita: Cita) {
+    // Intentamos buscar el teléfono del paciente en la lista cargada
+    const pacienteEncontrado = this.listaPacientes.find(p => p.id === cita.pacienteId);
+    let telefono = pacienteEncontrado?.telefono || (cita as any).telefono || '';
+
+    // Limpiamos el número de teléfono (dejamos solo números)
+    let telefonoLimpio = telefono.toString().replace(/\D/g, '');
+
+    if (!telefonoLimpio) {
+      this.mostrarToast('⚠️ El paciente no tiene un número telefónico registrado.', 'warning');
+      return;
+    }
+
+    // Mensaje preformateado
+    const mensaje = `Hola *${cita.nombrePaciente}*, te saludamos de *Dentismile* 🦷.\n\n` +
+                    `Te recordamos que tienes una cita programada para el día *${cita.fecha}* a las *${cita.horaInicio} hrs* con el *${cita.nombreDoctor || 'Doctor'}*.\n\n` +
+                    `Por favor, ¿nos confirmas tu asistencia respondiendo a este mensaje?\n¡Te esperamos!`;
+
+    const mensajeCodificado = encodeURIComponent(mensaje);
+    
+    // Asumimos lso 10 dígitos locales de México prefijados con 52
+    const urlWhatsApp = `https://wa.me/52${telefonoLimpio}?text=${mensajeCodificado}`;
+
+    window.open(urlWhatsApp, '_blank');
+  }
+
   abrirFormularioCita() {
-    // Limpieza de buscador
     this.busquedaPaciente = '';
     this.pacientesFiltrados = [];
     this.pacienteSeleccionadoObj = null;
@@ -269,7 +289,6 @@ export class CitasPage implements OnInit {
     this.pacienteSeleccionadoObj = null;
   }
 
-  // 🔍 LÓGICA DE BÚSQUEDA INTELIGENTE DE PACIENTES
   filtrarPacientes(event: any) {
     const valor = event.detail.value ? event.detail.value.toLowerCase().trim() : '';
     this.pacienteSeleccionadoObj = null;
@@ -279,7 +298,6 @@ export class CitasPage implements OnInit {
       return;
     }
 
-    // Coincidencia parcial por nombre, apellido o teléfono
     this.pacientesFiltrados = this.listaPacientes.filter(p => {
       const nombreCompleto = `${p.nombre || ''} ${p.apellido || ''}`.toLowerCase();
       const telefono = p.telefono ? p.telefono.toString() : '';
@@ -287,13 +305,12 @@ export class CitasPage implements OnInit {
     });
   }
 
-  // 🎯 SELECCIONAR PACIENTE DE LA LISTA SUGERIDA
   seleccionarPaciente(paciente: Paciente) {
     this.pacienteSeleccionadoObj = paciente;
     const nombreCompleto = `${paciente.nombre} ${paciente.apellido || ''}`.trim();
     this.busquedaPaciente = nombreCompleto;
     this.nuevaCita.nombrePaciente = nombreCompleto;
-    this.pacientesFiltrados = []; // Ocultar dropdown de sugerencias
+    this.pacientesFiltrados = [];
   }
 
   async guardarNuevaCita() {
@@ -304,13 +321,11 @@ export class CitasPage implements OnInit {
       return;
     }
 
-    // Mapeo de duración en minutos según la opción seleccionada
     let minutosDuracion = 30;
     if (this.nuevaCita.duracion === '45 min') minutosDuracion = 45;
     else if (this.nuevaCita.duracion === '1 hora') minutosDuracion = 60;
     else if (this.nuevaCita.duracion === '1.5 horas') minutosDuracion = 90;
 
-    // Cálculo de Hora Fin
     const [horaStr, minutosStr] = this.nuevaCita.horaInicio.split(':');
     const minutosTotalesInicio = Number(horaStr) * 60 + Number(minutosStr);
     const minutosTotalesFin = minutosTotalesInicio + minutosDuracion;
@@ -321,7 +336,6 @@ export class CitasPage implements OnInit {
 
     const idDoctorActual = 'DOCTOR_DEFAULT_ID'; 
 
-    // Validación de empalme
     const todasLasCitas = (await this.citasService.obtenerCitas()) || [];
     const citasDelDia = todasLasCitas.filter(c => 
       c.fecha === this.nuevaCita.fecha && 
@@ -340,7 +354,6 @@ export class CitasPage implements OnInit {
 
     const estadoInicial = (this.rolUsuario === 'Paciente') ? 'Pendiente' : 'Confirmada';
 
-    // Asignamos pacienteId real si seleccionó uno de la lista, o ID temporal si es manual
     const citaParaGuardar: Cita = {
       pacienteId: this.pacienteSeleccionadoObj?.id || 'PACIENTE_TEMP_ID',
       nombrePaciente: nombreFinal,

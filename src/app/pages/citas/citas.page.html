@@ -87,8 +87,14 @@
             <!-- Botones de Acción según el Rol y Estado -->
             <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;">
               
+              <!-- 🟢 BOTÓN WHATSAPP (Aviso de Cita) -->
+              <ion-button *ngIf="cita.estado !== 'Cancelada' && cita.estado !== 'Completada'" size="small" color="success" (click)="enviarRecordatorioWhatsApp(cita)">
+                <ion-icon name="logo-whatsapp" slot="start"></ion-icon>
+                Aviso WhatsApp
+              </ion-button>
+
               <!-- Validar Cita (Solo Doctor/Pendiente) -->
-              <ion-button *ngIf="rolUsuario === 'Doctor' && cita.estado === 'Pendiente'" size="small" color="success" (click)="validarCita(cita)">
+              <ion-button *ngIf="rolUsuario === 'Doctor' && cita.estado === 'Pendiente'" size="small" color="success" fill="outline" (click)="validarCita(cita)">
                 <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
                 Validar
               </ion-button>
@@ -111,7 +117,7 @@
     </ion-row>
   </ion-grid>
 
-  <!-- 📅 NUEVO MODAL: FORMULARIO PARA AGENDAR CITA CON BÚSQUEDA INTELIGENTE -->
+  <!-- 📅 MODAL: FORMULARIO PARA AGENDAR CITA CON BÚSQUEDA INTELIGENTE -->
   <ion-modal [isOpen]="isAgendarModalOpen" (didDismiss)="cerrarFormularioCita()">
     <ng-template>
       <ion-header class="ion-no-border">

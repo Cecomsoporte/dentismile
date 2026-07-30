@@ -1,13 +1,89 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>reportes</ion-title>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/panel"></ion-back-button>
+    </ion-buttons>
+    <ion-title style="font-weight: 600;">Reportes y Estadísticas</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">reportes</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding" style="--background: #f8fafc;">
+
+  <!-- 🗓️ FILTRO DE PERÍODO -->
+  <ion-card style="margin: 0 0 16px 0; border-radius: 12px; background: #ffffff;">
+    <ion-card-content style="padding: 12px 16px;">
+      <ion-item lines="none">
+        <ion-label style="font-weight: 600; color: #0f172a;">Filtrar Período:</ion-label>
+        <ion-select [(ngModel)]="filtroPeriodo" (ionChange)="procesarReportes()" interface="popover">
+          <ion-select-option value="hoy">Hoy</ion-select-option>
+          <ion-select-option value="semana">Esta Semana</ion-select-option>
+          <ion-select-option value="mes">Este Mes</ion-select-option>
+          <ion-select-option value="todos">Histórico General</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- 📈 METRICAS CLAVE / KPIS -->
+  <ion-grid style="padding: 0; margin-bottom: 20px;">
+    <ion-row>
+      <ion-col size="12" size-md="4">
+        <ion-card style="margin: 0; border-radius: 12px; background: #ffffff;">
+          <ion-card-content>
+            <p style="margin: 0; color: #64748b; font-size: 0.85rem; font-weight: 600;">INGRESOS TOTALES</p>
+            <h2 style="margin: 5px 0 0 0; color: #16a34a; font-size: 1.8rem; font-weight: 800;">${{ totalIngresos }}</h2>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="6" size-md="4">
+        <ion-card style="margin: 0; border-radius: 12px; background: #ffffff;">
+          <ion-card-content>
+            <p style="margin: 0; color: #64748b; font-size: 0.85rem; font-weight: 600;">CITAS PAGADAS</p>
+            <h2 style="margin: 5px 0 0 0; color: #0284c7; font-size: 1.8rem; font-weight: 800;">{{ totalCitasAtendidas }}</h2>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size="6" size-md="4">
+        <ion-card style="margin: 0; border-radius: 12px; background: #ffffff;">
+          <ion-card-content>
+            <p style="margin: 0; color: #64748b; font-size: 0.85rem; font-weight: 600;">TICKET PROMEDIO</p>
+            <h2 style="margin: 5px 0 0 0; color: #8b5cf6; font-size: 1.8rem; font-weight: 800;">${{ ticketPromedio }}</h2>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <!-- 🦷 TOP TRATAMIENTOS MÁS REALIZADOS -->
+  <ion-card style="margin: 0; border-radius: 12px; background: #ffffff;">
+    <ion-card-header>
+      <ion-card-title style="font-size: 1.1rem; color: #0f172a; display: flex; align-items: center; gap: 8px;">
+        <ion-icon name="stats-chart-outline" color="primary"></ion-icon>
+        Rendimiento por Tratamiento
+      </ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content style="padding: 0 16px 16px 16px;">
+      <ion-list lines="full" *ngIf="desgloseTratamientos.length > 0">
+        <ion-item *ngFor="let item of desgloseTratamientos">
+          <ion-icon slot="start" name="medical-outline" color="primary" style="font-size: 22px;"></ion-icon>
+          <ion-label>
+            <h2 style="font-weight: 700; color: #0f172a;">{{ item.nombre }}</h2>
+            <p style="color: #64748b;">Procedimientos realizados: {{ item.cantidad }}</p>
+          </ion-label>
+          <ion-badge slot="end" color="success" style="font-size: 0.95rem; padding: 6px 10px; border-radius: 6px;">
+            ${{ item.subtotal }}
+          </ion-badge>
+        </ion-item>
+      </ion-list>
+
+      <div *ngIf="desgloseTratamientos.length === 0" class="ion-text-center" style="padding: 30px 0;">
+        <ion-icon name="pie-chart-outline" style="font-size: 48px; color: #cbd5e1;"></ion-icon>
+        <p style="color: #64748b; margin-top: 8px;">No hay suficiente información para generar reportes en este rango de fechas.</p>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
 </ion-content>

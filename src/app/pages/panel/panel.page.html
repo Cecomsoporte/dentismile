@@ -1,6 +1,6 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>Dentismile</ion-title>
+  <ion-toolbar color="primary">
+    <ion-title style="font-weight: 600;">Dentismile</ion-title>
     
     <ion-buttons slot="end">
       <ion-button (click)="cerrarSesion()" class="logout-btn" title="Cerrar Sesión">
@@ -18,9 +18,10 @@
     <p style="margin-top: 5px; font-size: 0.9em; opacity: 0.8;">Rol actual: <strong>{{ rolUsuario }}</strong></p>
   </div>
 
-  <ion-card color="light" style="margin-bottom: 25px;" *ngIf="rolUsuario === 'Administrador' || rolUsuario === 'Recepcionista'">
+  <!-- 💳 Seccion de Cuentas por Cobrar (Visible para Recepción y Admin) -->
+  <ion-card color="light" style="margin-bottom: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);" *ngIf="rolUsuario === 'Administrador' || rolUsuario === 'Recepcionista'">
     <ion-card-header>
-      <ion-card-title style="display: flex; align-items: center; gap: 10px; font-size: 1.2em;">
+      <ion-card-title style="display: flex; align-items: center; gap: 10px; font-size: 1.2em; color: #1e293b;">
         <ion-icon name="wallet-outline" color="success"></ion-icon>
         Cuentas por Cobrar (Hoy)
       </ion-card-title>
@@ -31,22 +32,29 @@
       <ion-list *ngIf="citasPorCobrar.length > 0" lines="inset" style="background: transparent; padding: 0;">
         <ion-item *ngFor="let cita of citasPorCobrar" style="--background: transparent;">
           <ion-label>
-            <h2 style="font-weight: bold; color: var(--ion-color-dark);">{{ cita.nombrePaciente }}</h2>
-            <p>Tratamiento: {{ cita.tratamiento }}</p>
-            <p>Diagnóstico: {{ cita.diagnostico }}</p>
+            <h2 style="font-weight: 700; color: var(--ion-color-dark);">{{ cita.nombrePaciente }}</h2>
+            <p><strong>Tratamiento:</strong> {{ cita.tratamiento }}</p>
+            <p *ngIf="cita.diagnostico"><strong>Diagnóstico:</strong> {{ cita.diagnostico }}</p>
           </ion-label>
           
-          <ion-badge slot="end" color="danger" style="font-size: 14px; padding: 6px 10px; margin-right: 10px;">
+          <!-- Badge con el costo estimado/recetado -->
+          <ion-badge slot="end" color="danger" style="font-size: 14px; padding: 6px 10px; margin-right: 8px;">
             ${{ cita.costo }}
           </ion-badge>
 
-          <ion-button slot="end" color="success" (click)="cobrarCita(cita)">
+          <!-- 💵 Botón Rojo ($): Abre ventana de cobro -->
+          <ion-button slot="end" color="danger" size="small" (click)="cobrarCita(cita)" title="Ver / Cobrar $">
+            <ion-icon slot="icon-only" name="cash-outline"></ion-icon>
+          </ion-button>
+
+          <!-- ✔️ Botón Verde (Palomita): Procesa y finaliza cobro -->
+          <ion-button slot="end" color="success" size="small" (click)="cobrarCita(cita)" title="Confirmar Pago">
             <ion-icon slot="icon-only" name="checkmark-done-outline"></ion-icon>
           </ion-button>
         </ion-item>
       </ion-list>
 
-      <div *ngIf="citasPorCobrar.length === 0" class="ion-text-center" style="padding: 10px 0;">
+      <div *ngIf="citasPorCobrar.length === 0" class="ion-text-center" style="padding: 12px 0;">
         <p style="color: var(--ion-color-medium); margin: 0; font-size: 0.95em;">
           🎉 No hay saldos pendientes por cobrar en este momento.
         </p>
@@ -54,6 +62,7 @@
     </ion-card-content>
   </ion-card>
 
+  <!-- 📑 Grid del Menú Principal -->
   <ion-grid>
     <ion-row>
       <ion-col size="12" size-md="6" size-lg="4" *ngFor="let opcion of opcionesMenu">

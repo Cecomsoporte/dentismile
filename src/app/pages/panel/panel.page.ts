@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core'; // 👈 Corregido: Añadido inject aquí
+import { Component, OnInit, inject } from '@angular/core'; 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -6,7 +6,7 @@ import { CitasService } from '../../services/citas';
 import { AuthService } from '../../services/auth.service';
 import { Cita } from '../../models/cita.model';
 
-// 📦 Importamos los nuevos componentes de Ionic que usaremos para la lista de cobros
+// 📦 Importamos componentes Standalone de Ionic y controladores
 import { 
   IonContent, 
   IonHeader, 
@@ -26,7 +26,9 @@ import {
   IonList,        
   IonItem,        
   IonLabel,       
-  IonBadge        
+  IonBadge,
+  AlertController,
+  ToastController
 } from '@ionic/angular/standalone';
 
 // 🎨 Importación de iconos nativos de Ionic
@@ -75,6 +77,8 @@ export class PanelPage implements OnInit {
 
   // Inyección moderna de dependencias (Standalone compatible)
   private citasService = inject(CitasService);
+  private alertController = inject(AlertController);
+  private toastController = inject(ToastController);
 
   // 📋 Lista maestra de opciones con sus respectivos roles permitidos
   private opcionesMenuCompleto = [
@@ -91,7 +95,6 @@ export class PanelPage implements OnInit {
     private authService: AuthService,   // Inyectamos el servicio de Firebase Auth
     private router: Router              // Inyectamos el enrutador de Angular
   ) { 
-    // 🎨 Corregido: Limpiado el constructor duplicado
     addIcons({ logOutOutline, cashOutline, checkmarkDoneOutline, walletOutline });
   }
 
@@ -116,19 +119,25 @@ export class PanelPage implements OnInit {
     }
   }
 
-  // 🔍 FUNCIÓN ASÍNCRONA CORREGIDA: Trae de Firebase las consultas terminadas en la fecha local hoy
+  // Refresca la lista cada vez que la vista del Panel vuelve a estar activa
+  async ionViewWillEnter() {
+    if (this.rolUsuario === 'Administrador' || this.rolUsuario === 'Recepcionista') {
+      await this.cargarCitasPorCobrar();
+    }
+  }
+
+  // 🔍 FUNCIÓN ASÍNCRONA: Trae de Firebase las consultas terminadas en la fecha local hoy
   async cargarCitasPorCobrar() {
     try {
-      // 🌟 SOLUCIÓN HORARIA: Forzamos la obtención de la fecha en horario local de México, no UTC
+      // 🌟 SOLUCIÓN HORARIA: Fecha local en formato YYYY-MM-DD
       const fechaLocal = new Date();
       const año = fechaLocal.getFullYear();
       const mes = String(fechaLocal.getMonth() + 1).padStart(2, '0');
       const dia = String(fechaLocal.getDate()).padStart(2, '0');
-      const hoyLocal = `${año}-${mes}-${dia}`; // Formato: YYYY-MM-DD local
+      const hoyLocal = `${año}-${mes}-${dia}`;
 
       console.log('Consultando cobros pendientes para la fecha local:', hoyLocal);
 
-      // Consumimos el servicio pasando la fecha local correcta
       this.citasPorCobrar = await this.citasService.obtenerCitasPorCobrar(hoyLocal);
       console.log('Cobros pendientes cargados:', this.citasPorCobrar);
     } catch (error: any) {
@@ -136,15 +145,82 @@ export class PanelPage implements OnInit {
     }
   }
 
-  // 💰 FUNCIÓN ASÍNCRONA: Cambia el estado a 'Pagada' y actualiza la vista
+  // 💰 FUNCIÓN ASÍNCRONA DE COBRO: Abre un modal interactivo para recepcionistas
   async cobrarCita(cita: Cita) {
     if (!cita.id) return;
+
+    const costoSugerido = cita.costo || 350;
+
+    const alert = await this.alertController.create({
+      header: '💳 Registrar Cobro',
+      subHeader: `Paciente: ${cita.nombrePaciente || 'Paciente General'}`,
+      message: `
+        <div style="text-align: left; margin-top: 5px;">
+          <p style="margin: 3px 0;"><strong>Tratamiento:</strong> ${cita.tratamiento || 'Consulta'}</p>
+          <p style="margin: 3px 0;"><strong>Diagnóstico:</strong> ${cita.diagnostico || 'Atención completada'}</p>
+        </div>
+      `,
+      inputs: [
+        {
+          name: 'monto',
+          type: 'number',
+          placeholder: 'Monto a cobrar ($)',
+          value: costoSugerido
+        },
+        {
+          name: 'metodoPago',
+          type: 'radio',
+          label: '💵 Efectivo',
+          value: 'Efectivo',
+          checked: true
+        },
+        {
+          name: 'metodoPago',
+          type: 'radio',
+          label: '💳 Tarjeta (Débito/Crédito)',
+          value: 'Tarjeta'
+        },
+        {
+          name: 'metodoPago',
+          type: 'radio',
+          label: '📱 Transferencia / SPEI',
+          value: 'Transferencia'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        },
+        {
+          text: 'Confirmar y Cobrar',
+          handler: async (data) => {
+            if (!data.monto || Number(data.monto) <= 0) {
+              this.mostrarToast('Por favor ingresa un monto válido.', 'warning');
+              return false;
+            }
+
+            await this.procesarPago(cita.id!, Number(data.monto), data.metodoPago);
+            return true;
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  // Procesa el cambio de estado en Firebase e informa al usuario
+  async procesarPago(citaId: string, monto: number, metodoPago: string) {
     try {
-      await this.citasService.actualizarEstado(cita.id, 'Pagada');
-      console.log(`Pago registrado con éxito para la cita: ${cita.id}`);
+      // Si tu servicio soporta campos extra o cambio de estado:
+      await this.citasService.actualizarEstado(citaId, 'Pagada');
+      
+      this.mostrarToast(`¡Cobro de $${monto} registrado exitosamente!`, 'success');
       await this.cargarCitasPorCobrar();
-    } catch (error: any) { // 👈 Cámbialo aquí también agregando ': any'
+    } catch (error: any) {
       console.error('Error al procesar el cobro en Firebase:', error);
+      this.mostrarToast('Ocurrió un error al registrar el pago.', 'danger');
     }
   }
 
@@ -170,4 +246,15 @@ export class PanelPage implements OnInit {
       console.error('Error al intentar cerrar sesión:', error);
     }
   }
-} // 👈 Corregido: Añadido el cierre definitivo de la clase
+
+  // Mensajes flotantes informativos
+  async mostrarToast(mensaje: string, color: string) {
+    const toast = await this.toastController.create({
+      message: mensaje,
+      duration: 3000,
+      color: color,
+      position: 'bottom'
+    });
+    await toast.present();
+  }
+}
